@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import React, { useState } from 'react';
+import Slider from '../components/slider/slider';
 
 
 export default function Game() {
@@ -33,37 +34,39 @@ export default function Game() {
               How to play?
             </h1>
             <section className="bg-gray-100 py-8">
-            <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1">
-              <p className="text-lg leading-8 text-gray-600">
-                In the first step, we will ask about your number of impression counts and average conversion rate.
-                We would model your data on the Criteo dataset to see if it fits your use-case.
-              </p>
-            </div>
+              <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1">
+                <p className="text-lg leading-8 text-gray-600">
+                  In the first step, we will ask about your number of impression counts and average conversion rate.
+                  We would model your data on the Criteo dataset to see if it fits your use-case.
+                </p>
+              </div>
               <br />
-              <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1 text-gray-900">
-                Number of impressions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <input
-                    type="text"
-                    placeholder=""
-                    value={inputValue}
-                    onChange={handleInputChange}
-                  />
+              <div className="flex">
+                <div className="w-1/2 flex-none p-4 text-gray-900">
+                  <p>Number of impressions</p>
                 </div>
-                <br /><br />
-                <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1 text-gray-900">Average Conversion Rate expected &nbsp;
-                  <input
-                    type="text"
-                    placeholder=""
-                    value={conversionRate}
-                    onChange={handleConversionRateChange}
-                  />
+                <div className="flex-1 bg-gray-900 p-4">
+                <Slider />
                 </div>
-                </section>
-                <section className="bg-white py-8 lg:justify-center">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleButtonClick}>Show possible conversions</button>
-                <br /><br /><br />
-                </section>
-                <Link className="max-w-xs text-gray-900" href="/">Back to home</Link>
+              </div>
+              <div className="flex" >
+                <div className="w-1/2 flex-none p-4 bg-gray-900">
+                  <p>Average Conversion Rate expected</p>
+                </div>
+                <div className="flex-1 text-gray-900 p-4">
+                <input
+                  type="text"
+                  placeholder=""
+                  value={conversionRate}
+                  onChange={handleConversionRateChange}
+                /></div>
+              </div>
+            </section>
+            <section className="bg-white py-8 lg:justify-center">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleButtonClick}>Show possible conversions</button>
+              <br /><br /><br />
+            </section>
+            <Link className="max-w-xs text-gray-900" href="/">Back to home</Link>
           </div>
         </div>
       </main>
