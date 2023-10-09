@@ -25,21 +25,21 @@ export function CampaignSizeSlider() {
 }
 
 export function ConversionRateSlider() {
-  const [sliderValue, setSliderValue] = useState(10);
+  const [sliderValue, setSliderValue] = useState(2);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
     setSliderValue(val);
   };
 
-  const displayValue = (1 /1000 * sliderValue).toLocaleString();
+  const displayValue = (5 /1000 * sliderValue).toFixed(3);
   return (
     <>
       <p>Average Conversion Rate: {displayValue}</p>
       <input
         type="range"
         min="1"
-        max="1000"
+        max="200"
         value={sliderValue}
         onChange={handleSliderChange}
         className="w-full"
