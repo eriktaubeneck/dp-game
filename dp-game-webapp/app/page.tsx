@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import Header from '@/app/nav'
 import React from 'react';
 import Link from 'next/link'
 
