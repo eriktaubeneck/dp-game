@@ -17,6 +17,12 @@ export default function Game() {
     setConversionRate(text); // Update the state with the text
   };
 
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleButtonClick = () => {
+    setIsClicked(!isClicked);
+  };
+
   return (
     <div className="bg-white">
       <main className="isolate">
@@ -26,14 +32,13 @@ export default function Game() {
             <h1 className="max-w-2xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">
               How to play?
             </h1>
-            <br />
+            <section className="bg-gray-100 py-8">
             <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1">
               <p className="text-lg leading-8 text-gray-600">
                 In the first step, we will ask about your number of impression counts and average conversion rate.
                 We would model your data on the Criteo dataset to see if it fits your use-case.
               </p>
             </div>
-            <h2>
               <br />
               <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1 text-gray-900">
                 Number of impressions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -53,9 +58,12 @@ export default function Game() {
                     onChange={handleConversionRateChange}
                   />
                 </div>
+                </section>
+                <section className="bg-white py-8 lg:justify-center">
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleButtonClick}>Show possible conversions</button>
                 <br /><br /><br />
+                </section>
                 <Link className="max-w-xs text-gray-900" href="/">Back to home</Link>
-            </h2>
           </div>
         </div>
       </main>
