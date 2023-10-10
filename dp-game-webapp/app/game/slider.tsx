@@ -42,7 +42,7 @@ export function ConversionRateSlider() {
       <input
         type="range"
         min="1"
-        max="200"
+        max="199"
         value={sliderValue}
         onChange={handleSliderChange}
         className="w-full"

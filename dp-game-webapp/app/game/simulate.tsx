@@ -49,15 +49,19 @@ export function simulateConversionRates(
 }
 
 function adjustedVariance(mean: number): number {
+  // this comes from the data_analysis/ subproject
+  // see: https://github.com/eriktaubeneck/dp-game/tree/main/data_analysis
+  const defaultMean = 0.0451045288285979;
   const defaultVariance = 0.001477718655290317;
 
-  const maxVariance = mean * (1 - mean);
-  if (maxVariance < defaultVariance) {
-    // a little buffer to avoid alpha and beta being 0
-    return maxVariance * 0.9;
-  } else {
-    return defaultVariance;
-  }
+  // this scales the variance used for simulation
+  // to the mean provided by the user.
+  // it assumes that, because our underlying process
+  // is Bernoulli, the variance ~ p(1-p)
+  const k = mean / defaultMean;
+  const j = (k * (1 - k * defaultMean)) / (1 - defaultMean);
+
+  return j * defaultVariance;
 }
 
 function betaAlphaBeta(mean: number, variance: number): [number, number] {
