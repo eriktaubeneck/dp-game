@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { generateSimulatedConversions, adjustedVariance } from "./simulate";
 
-export function CampaignSizeSlider() {
-  const [sliderExpValue, setSliderExpValue] = useState(6);
-
+export function CampaignSizeSlider({ value, onChange }) {
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
-    setSliderExpValue(val);
+    onChange(val);
   };
-  const displayValue = Math.pow(10, sliderExpValue).toLocaleString();
+  const displayValue = Math.pow(10, value).toLocaleString();
 
   return (
     <>
@@ -17,7 +15,7 @@ export function CampaignSizeSlider() {
         type="range"
         min="4"
         max="8"
-        value={sliderExpValue}
+        value={value}
         onChange={handleSliderChange}
         className="w-full"
       />
@@ -25,13 +23,13 @@ export function CampaignSizeSlider() {
   );
 }
 
-export function ConversionRateSlider() {
-  const [sliderValue, setSliderValue] = useState(2);
+export function ConversionRateSlider({ value, onChange }) {
+  const sliderValue = (value * 1000) / 5;
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
-    setSliderValue(val);
     let conversionRate = (5 / 1000) * val;
+    onChange(conversionRate);
     let variance = adjustedVariance(conversionRate);
     console.log(
       Array.from(
