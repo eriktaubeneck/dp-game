@@ -1,15 +1,15 @@
 var binomial_dist = require("@stdlib/random-base-binomial");
 var beta_dist = require("@stdlib/random-base-beta");
 
-export function simulateConversions(
+export function* generateSimulatedConversions(
   impressions: number,
   conversionRate: number,
   rounds: number,
   seed: number = 1613149041,
-): number[] {
+): Generator<number> {
   const variance = adjustedVariance(conversionRate);
 
-  const conversionRates: number[] = simulateConversionRates(
+  const conversionRates: Generator<number> = generateSimulatedConversionRates(
     conversionRate,
     variance,
     rounds,
@@ -20,32 +20,25 @@ export function simulateConversions(
     seed: seed,
   });
 
-  const conversionCounts: number[] = [];
-
-  for (let i = 0; i < rounds; i++) {
-    conversionCounts.push(rand(impressions, conversionRates[i]));
+  for (const conversionRate of conversionRates) {
+    yield rand(impressions, conversionRate);
   }
-
-  return conversionCounts;
 }
 
-export function simulateConversionRates(
+export function* generateSimulatedConversionRates(
   mean: number,
   variance: number,
   rounds: number,
   seed: number = 1613149041,
-): number[] {
+): Generator<number> {
   const [alpha, beta] = betaAlphaBeta(mean, variance);
   var rand = beta_dist.factory(alpha, beta, {
     seed: seed,
   });
-  const conversionRates: number[] = [];
 
   for (let i = 0; i < rounds; i++) {
-    conversionRates.push(rand());
+    yield rand();
   }
-
-  return conversionRates;
 }
 
 function adjustedVariance(mean: number): number {

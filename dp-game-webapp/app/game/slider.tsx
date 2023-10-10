@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { simulateConversions } from "./simulate";
+import { generateSimulatedConversions } from "./simulate";
 
 export function CampaignSizeSlider() {
   const [sliderExpValue, setSliderExpValue] = useState(6);
@@ -32,7 +32,9 @@ export function ConversionRateSlider() {
     const val = parseInt(e.target.value, 10);
     setSliderValue(val);
     let conversionRate = (5 / 1000) * val;
-    console.log(simulateConversions(1000000, conversionRate, 10));
+    console.log(
+      Array.from(generateSimulatedConversions(1000000, conversionRate, 10)),
+    );
   };
 
   const displayValue = ((5 / 1000) * sliderValue).toFixed(3);
