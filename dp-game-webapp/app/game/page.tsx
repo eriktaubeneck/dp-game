@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
-import { simulatedPercentiles } from "./simulate";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Game() {
