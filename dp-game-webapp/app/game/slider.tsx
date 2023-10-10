@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { simulateConversions } from "./simulate";
 
 export function CampaignSizeSlider() {
   const [sliderExpValue, setSliderExpValue] = useState(6);
@@ -30,9 +31,11 @@ export function ConversionRateSlider() {
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
     setSliderValue(val);
+    let conversionRate = (5 / 1000) * val;
+    console.log(simulateConversions(1000000, conversionRate, 10));
   };
 
-  const displayValue = (5 /1000 * sliderValue).toFixed(3);
+  const displayValue = ((5 / 1000) * sliderValue).toFixed(3);
   return (
     <>
       <p>Average Conversion Rate: {displayValue}</p>
