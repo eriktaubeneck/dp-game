@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { generateSimulatedConversions } from "./simulate";
+import { generateSimulatedConversions, adjustedVariance } from "./simulate";
 
 export function CampaignSizeSlider() {
   const [sliderExpValue, setSliderExpValue] = useState(6);
@@ -32,8 +32,11 @@ export function ConversionRateSlider() {
     const val = parseInt(e.target.value, 10);
     setSliderValue(val);
     let conversionRate = (5 / 1000) * val;
+    let variance = adjustedVariance(conversionRate);
     console.log(
-      Array.from(generateSimulatedConversions(1000000, conversionRate, 10)),
+      Array.from(
+        generateSimulatedConversions(1000000, conversionRate, variance, 10),
+      ),
     );
   };
 

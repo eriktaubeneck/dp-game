@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
+import { simulatedPercentiles } from "./simulate";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Game() {
@@ -9,6 +10,8 @@ export default function Game() {
   const handleButtonClick = () => {
     setIsClicked(!isClicked);
   };
+
+  console.log(simulatedPercentiles(1000000, 0.0451, 0.00147, 10_000_000));
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">

@@ -1,14 +1,14 @@
 var binomial_dist = require("@stdlib/random-base-binomial");
 var beta_dist = require("@stdlib/random-base-beta");
+var TDigest = require("tdigest").TDigest;
 
 export function* generateSimulatedConversions(
   impressions: number,
   conversionRate: number,
+  variance: number,
   rounds: number,
   seed: number = 1613149041,
 ): Generator<number> {
-  const variance = adjustedVariance(conversionRate);
-
   const conversionRates: Generator<number> = generateSimulatedConversionRates(
     conversionRate,
     variance,
@@ -41,7 +41,7 @@ export function* generateSimulatedConversionRates(
   }
 }
 
-function adjustedVariance(mean: number): number {
+export function adjustedVariance(mean: number): number {
   // this comes from the data_analysis/ subproject
   // see: https://github.com/eriktaubeneck/dp-game/tree/main/data_analysis
   const defaultMean = 0.0451045288285979;
@@ -60,4 +60,31 @@ function adjustedVariance(mean: number): number {
 function betaAlphaBeta(mean: number, variance: number): [number, number] {
   let alpha = mean * mean * ((1 - mean) / variance - 1 / mean);
   return [alpha, alpha * (1 / mean - 1)];
+}
+
+export function simulatedPercentiles(
+  impressions: number,
+  conversionRate: number,
+  variance: number,
+  rounds: number,
+  seed: number = 1613149041,
+  percentiles: number[] = [0.01, 0.1, 0.5, 0.9, 0.99],
+): number[] {
+  var td = new TDigest();
+  const conversionCounts: Generator<number> = generateSimulatedConversions(
+    impressions,
+    conversionRate,
+    variance,
+    rounds,
+    seed,
+  );
+  for (const conversionCount of conversionCounts) {
+    td.push(conversionCount);
+  }
+  td.compress();
+  const percentileValues: number[] = [];
+  for (const percentile of percentiles) {
+    percentileValues.push(td.percentile(percentile));
+  }
+  return percentileValues;
 }
