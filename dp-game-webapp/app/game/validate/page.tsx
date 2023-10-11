@@ -14,7 +14,6 @@ import {
 
 export default function Validate() {
   const [isContinueClicked, setIsContinueClicked] = useState(false);
-  const [isBackClicked, setIsBackClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [percentiles, setPercentiles] = useState<number[]>([]);
 
@@ -56,10 +55,6 @@ export default function Validate() {
 
   const handleContinueButtonClick = () => {
     setIsContinueClicked(!isContinueClicked);
-  };
-
-  const handleBackButtonClick = () => {
-    setIsBackClicked(!isBackClicked);
   };
 
   return (
@@ -128,7 +123,6 @@ export default function Validate() {
                   <Link href="/game/configure">
                     <button
                       className="mt-10 h-12 w-32 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-                      onClick={handleBackButtonClick}
                     >
                       <ArrowLeftCircleIcon className="h-8 w-auto" />
                       Back
