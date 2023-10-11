@@ -3,6 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { adjustedVariance, simulatedPercentiles } from "../simulate";
 
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 export default function Play() {
   const MAX_COUNT = 1_000_000;
   const NUM_QUESTIONS = 10;
@@ -36,7 +43,29 @@ export default function Play() {
     : adjustedVariance(conversionRate);
 
   const preloadInputs = () => {
-    // TODO
+    let mixedArray = [];
+
+    for (let i = 0; i < NUM_QUESTIONS; i++) {
+      let percentile = Math.floor(Math.random() * MAX_COUNT);
+      let value = percentiles[percentile];
+      mixedArray = [...mixedArray, { "p": percentile, "v": value }];
+    }
+
+    let noised_array = mixedArray;
+    //TODO: add dp to noised_array
+
+    // merge them
+    for (let row in mixedArray) {
+      addItem({ "p": row.percentile, "v": row.value, "n": false });
+    }
+
+    for (let row in noised_array) {
+      addItem({ "p": row.percentile, "v": row.value, "n": true });
+    }
+
+    //shuffle items
+    shuffleArray(data);
+    console.log("Data is as follows", data);
   }
 
 useEffect(() => {
@@ -72,7 +101,7 @@ return (
           <div className="spinner"> Loading...</div>
         ) : (<>
           <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-500 dark:text-white">With these many conversions, would you increase spend or decrease spend?</h5>
-          <p className="mb-2 text-5xl text-grey-700 dark:text-grey-400 justify-end text-center dark:text-white">TODO</p>
+          <p className="mb-2 text-5xl text-grey-700 dark:text-grey-400 justify-end text-center dark:text-white">{Math.floor(percentiles[4])}</p>
           <div className="flex mt-5 justify-between space-x-3 md:mt-6">
             <button className="px-3 py-2 text-base font-medium text-white bg-red-700 rounded-lg onClick={handleDecreaseSpend}">
               Decrease Spend
