@@ -5,6 +5,15 @@ Through this research, we are trying to understand if advertising practitioners 
 We plan to experiment with a set of epsilon values to research on utility of adding noise to the results.
 
 # How to play the game?
+
+## Step 0: Download the code and run it.
+1. We used [Next.js](https://nextjs.org/) to build this simple game. You would need to download it if not already there.
+2. `git clone https://github.com/eriktaubeneck/dp-game`
+3. `cd dp-game-webapp`
+4. If npm is not installed, install npm
+5. Run the following command `npm run dev`
+6. Install the required dependencies
+   
 ## Step 1: Setup your initial configuration
 1. We would ask you to configure your typical usage i.e. number of impressions and average conversion rate observed in your campaigns
 2. Using this configuration, we would show you some simulated campaign results. We use Beta Distribution and publicly available [Criteo dataset](https://ailab.criteo.com/criteo-attribution-modeling-bidding-dataset/) to make some initial assumptions. You can find the detailed analysis [here](https://github.com/eriktaubeneck/dp-game/tree/main/data_analysis).
@@ -17,5 +26,4 @@ We plan to experiment with a set of epsilon values to research on utility of add
 And.. that's it! We plan to run this game across several practitioners and collect data points. Based on this exercise, we hope to get a better understanding of effect of DP on the results.
 
 
-# Tech behind the game
-We used [Next.js](https://nextjs.org/) to build this simple game.
+
