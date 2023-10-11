@@ -30,8 +30,6 @@ export default function Configure() {
     setCampaignSizeExp(value);
   };
 
-  // console.log(simulatedPercentiles(1000000, 0.0451, 0.00147, 10_000_000));
-
   return (
     <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
       <h1 className="max-w-2xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">

@@ -30,12 +30,6 @@ export function ConversionRateSlider({ value, onChange }) {
     const val = parseInt(e.target.value, 10);
     let conversionRate = (5 / 1000) * val;
     onChange(conversionRate);
-    let variance = adjustedVariance(conversionRate);
-    console.log(
-      Array.from(
-        generateSimulatedConversions(1000000, conversionRate, variance, 10),
-      ),
-    );
   };
 
   const displayValue = ((5 / 1000) * sliderValue).toFixed(3);
