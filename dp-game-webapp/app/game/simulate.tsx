@@ -95,6 +95,6 @@ export function laplaceNoise(
   sensitivity: number,
   epsilon: number,
 ): number {
-  const noise: number = Math.round(laplace_dist(0.0, sensitivity / epsilon));
+  const noise: number = laplace_dist(0.0, sensitivity / epsilon);
   return value + noise;
 }

@@ -18,9 +18,27 @@ export default function Play() {
   const SENSITIVITY = 1;
   const EPSILON = 1;
 
+  enum Answer {
+    IncreaseSpend,
+    DecreaseSpend,
+  }
+
+  interface Question {
+    conversions: number;
+    noise: number;
+    actualResult?: Answer;
+    noisedResult?: Answer;
+  }
+
+  interface QuestionIndex {
+    index: number;
+    noised: bool;
+  }
+
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [conversions, setConversions] = useState<number[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
 
   const conversionRate = parseFloat(
@@ -52,17 +70,53 @@ export default function Play() {
           NUM_QUESTIONS,
         );
 
-      const conversions: number[] = [];
+      const questions: Question[] = [];
 
-      for (const conversion of simulatedConversions) {
-        conversions.push(conversion);
-        conversions.push(laplaceNoise(conversion, SENSITIVITY, EPSILON));
+      for (const conversions of simulatedConversions) {
+        const question: Question = {
+          conversions: conversions,
+          noise: laplaceNoise(0, SENSITIVITY, EPSILON),
+        };
+        questions.push(question);
       }
-      setConversions(conversions);
+      setQuestions(questions);
+    };
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+    const shuffleQuestionOrder = () => {
+      const questionOrder: QuestionIndex[] = [];
+      for (let i = 0; i < NUM_QUESTIONS; i++) {
+        questionOrder.push({ index: i, noised: false });
+        questionOrder.push({ index: i, noised: true });
+      }
+      shuffleArray(questionOrder);
+      setQuestionOrder(questionOrder);
     };
 
     getConversionsAndPreLoad();
+    shuffleQuestionOrder();
   }, []);
+
+  const getCurrentQuestion = () => {
+    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.conversions;
+    } else {
+      return question.conversions + Math.round(question.noise);
+    }
+  };
+
+  const numCorrect = questions.reduce(
+    (count, question) =>
+      question.actualResult === question.noisedResult ? count + 1 : count,
+    0,
+  );
 
   const incrementQuestion = () => {
     if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
@@ -72,11 +126,28 @@ export default function Play() {
     }
   };
 
+  const handleAnswer = (answer: Answer) => {
+    const questionsCopy = [...questions];
+    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
+    const question: Question = questions[questionIndex.index];
+    const updatedQuestion: Question = {
+      conversions: question.conversions,
+      noise: question.noise,
+      actualResult: questionIndex.noised ? question.actualResult : answer,
+      noisedResult: questionIndex.noised ? answer : question.noisedResult,
+    };
+
+    questionsCopy[questionIndex.index] = updatedQuestion;
+    setQuestions(questionsCopy);
+  };
+
   const handleDecreaseSpend = () => {
+    handleAnswer(Answer.DecreaseSpend);
     incrementQuestion();
   };
 
   const handleIncreaseSpend = () => {
+    handleAnswer(Answer.IncreaseSpend);
     incrementQuestion();
   };
 
@@ -135,8 +206,7 @@ export default function Play() {
                     </div>
 
                     <p className="mb-2 text-4xl text-grey-700 dark:text-grey-400 justify-end text-center dark:text-white">
-                      {conversions[currentQuestionIndex].toLocaleString()}{" "}
-                      conversions
+                      {getCurrentQuestion().toLocaleString()} conversions
                     </p>
                     <CampaignStats
                       impressions={impressions}
@@ -167,8 +237,14 @@ export default function Play() {
                 )}
               </>
             ) : (
-              // TODO: format and results
-              <div> finished! </div>
+              <>
+                // TODO: format and results
+                <div> finished! </div>
+                <div>
+                  {" "}
+                  accuracy: {((100 * numCorrect) / NUM_QUESTIONS).toFixed(0)}%
+                </div>
+              </>
             )}
           </div>
         </div>
