@@ -5,6 +5,7 @@ import {
   adjustedVariance,
   simulatedPercentiles,
 } from "../simulate";
+import { CampaignStats } from "../campaignStats";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
@@ -68,18 +69,12 @@ export default function Validate() {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="bg-white/60 px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
-            <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-              Campaign Stats
-            </div>
-            <div className="mt-6 mb-6 flex-col items-center justify-between">
-              Number of Impressions: {impressions.toLocaleString()}
-              <br />
-              Expected Number of Conversions (Total):{" "}
-              {totalConversions.toLocaleString()}
-              <br />
-              Expected Conversions per 1000 Impressions:{" "}
-              {conversionPerThousand.toLocaleString()}
-            </div>
+            <CampaignStats
+              impressions={impressions}
+              totalConversions={totalConversions}
+              conversionsPerThousand={conversionPerThousand}
+              className="mt-6"
+            />
 
             <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
               Expected Range of Results
@@ -121,9 +116,7 @@ export default function Validate() {
 
                 <div className="flex justify-between items-center mt-10">
                   <Link href="/game/configure">
-                    <button
-                      className="mt-10 h-12 w-32 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-                    >
+                    <button className="mt-10 h-12 w-32 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
                       <ArrowLeftCircleIcon className="h-8 w-auto" />
                       Back
                     </button>

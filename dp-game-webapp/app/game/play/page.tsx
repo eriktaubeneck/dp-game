@@ -11,6 +11,7 @@ import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
+import { CampaignStats } from "../campaignStats";
 
 export default function Play() {
   const NUM_QUESTIONS = 10;
@@ -101,18 +102,12 @@ export default function Play() {
                       configuration.
                     </p>
 
-                    <div className="mt-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-                      Campaign Stats
-                    </div>
-                    <div className="mb-6 flex-col items-center justify-between">
-                      Number of Impressions: {impressions.toLocaleString()}
-                      <br />
-                      Expected Number of Conversions (Total):{" "}
-                      {totalConversions.toLocaleString()}
-                      <br />
-                      Expected Conversions per 1000 Impressions:{" "}
-                      {conversionPerThousand.toLocaleString()}
-                    </div>
+                    <CampaignStats
+                      impressions={impressions}
+                      totalConversions={totalConversions}
+                      conversionsPerThousand={conversionPerThousand}
+                      className="mt-6"
+                    />
 
                     <div className="flex justify-between items-center mt-10">
                       <Link href="/game/validate">
@@ -143,18 +138,12 @@ export default function Play() {
                       {conversions[currentQuestionIndex].toLocaleString()}{" "}
                       conversions
                     </p>
-                    <div className="mt-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-                      Campaign Stats
-                    </div>
-                    <div className="mb-6 flex-col items-center justify-between">
-                      Number of Impressions: {impressions.toLocaleString()}
-                      <br />
-                      Expected Number of Conversions (Total):{" "}
-                      {totalConversions.toLocaleString()}
-                      <br />
-                      Expected Conversions per 1000 Impressions:{" "}
-                      {conversionPerThousand.toLocaleString()}
-                    </div>
+                    <CampaignStats
+                      impressions={impressions}
+                      totalConversions={totalConversions}
+                      conversionsPerThousand={conversionPerThousand}
+                      className="mt-6"
+                    />
 
                     <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
                       Given this result, would you increase or decrease spend?

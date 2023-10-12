@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
+import { CampaignStats } from "../campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Configure() {
@@ -13,8 +14,8 @@ export default function Configure() {
     sessionStorage.getItem("campaignSizeExp") || "6",
   );
   const [campaignSizeExp, setCampaignSizeExp] = useState(savedCampaignSizeExp);
-  const totalConversions: number =
-    Math.pow(10, campaignSizeExp) * conversionRate;
+  const impressions: number = Math.pow(10, campaignSizeExp);
+  const totalConversions: number = impressions * conversionRate;
   const conversionPerThousand: number = 1000 * conversionRate;
 
   const handleButtonClick = () => {
@@ -45,7 +46,7 @@ export default function Configure() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="bg-white/60 px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
             <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-              Campaign Stats
+              Configuration
             </div>
 
             <div className="flex-col items-center justify-between">
@@ -60,14 +61,13 @@ export default function Configure() {
                 onChange={handleConversionRateChange}
               />
             </div>
-            <div className="mt-6 mb-6 flex-col items-center justify-between">
-              Expected Number of Conversions (Total):{" "}
-              {totalConversions.toLocaleString()}
-            </div>
-            <div className="mb-6 flex-col items-center justify-between">
-              Expected Conversions per 1000 Impressions:{" "}
-              {conversionPerThousand.toLocaleString()}
-            </div>
+
+            <CampaignStats
+              impressions={impressions}
+              totalConversions={totalConversions}
+              conversionsPerThousand={conversionPerThousand}
+              className="mt-6"
+            />
 
             <div className="flex justify-end mt-10">
               <Link href="/game/validate">
