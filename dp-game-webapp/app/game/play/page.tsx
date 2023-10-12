@@ -42,7 +42,7 @@ export default function Play() {
     : adjustedVariance(conversionRate);
 
   useEffect(() => {
-    const getPercentilesAndPreLoad = () => {
+    const getConversionsAndPreLoad = () => {
       const simulatedConversions: Generator<number> =
         generateSimulatedConversions(
           impressions,
@@ -60,7 +60,7 @@ export default function Play() {
       setConversions(conversions);
     };
 
-    getPercentilesAndPreLoad();
+    getConversionsAndPreLoad();
   }, []);
 
   const incrementQuestion = () => {
