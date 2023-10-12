@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.18",
     "@stdlib/random-base-beta": "^0.1.0",
     "@stdlib/random-base-binomial": "^0.1.0",
+    "@stdlib/random-base-laplace": "^0.1.0",
     "next": "13.5.4",
     "react": "^18",
     "react-dom": "^18",

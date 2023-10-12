@@ -1,5 +1,6 @@
 var binomial_dist = require("@stdlib/random-base-binomial");
 var beta_dist = require("@stdlib/random-base-beta");
+var laplace_dist = require("@stdlib/random-base-laplace");
 var TDigest = require("tdigest").TDigest;
 
 export function* generateSimulatedConversions(
@@ -87,4 +88,13 @@ export function simulatedPercentiles(
     percentileValues.push(td.percentile(percentile));
   }
   return percentileValues;
+}
+
+export function laplaceNoise(
+  value: number,
+  sensitivity: number,
+  epsilon: number,
+): number {
+  const noise: number = Math.round(laplace_dist(0.0, sensitivity / epsilon));
+  return value + noise;
 }
