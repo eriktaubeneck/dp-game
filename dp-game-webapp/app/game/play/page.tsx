@@ -105,7 +105,7 @@ export default function Play() {
   const getCurrentQuestion = () => {
     const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
     const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
+    if (!questionIndex.noised) {
       return question.conversions;
     } else {
       return question.conversions + Math.round(question.noise);
