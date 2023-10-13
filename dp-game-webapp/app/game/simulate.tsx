@@ -42,20 +42,12 @@ export function* generateSimulatedConversionRates(
   }
 }
 
-export function adjustedVariance(mean: number): number {
-  // this comes from the data_analysis/ subproject
-  // see: https://github.com/eriktaubeneck/dp-game/tree/main/data_analysis
-  const defaultMean = 0.0451045288285979;
-  const defaultVariance = 0.001477718655290317;
-
-  // this scales the variance used for simulation
-  // to the mean provided by the user.
-  // it assumes that, because our underlying process
-  // is Bernoulli, the variance ~ p(1-p)
-  const k = mean / defaultMean;
-  const j = (k * (1 - k * defaultMean)) / (1 - defaultMean);
-
-  return j * defaultVariance;
+export function defaultVariance(mean: number): number {
+  // default to something very small comparied to mean
+  // and adjust from there.
+  // for extreme values of mean, larger values of variance
+  // cause percentile Monte Carlo to go very slow.
+  return mean / 1000;
 }
 
 function betaAlphaBeta(mean: number, variance: number): [number, number] {
@@ -100,7 +92,7 @@ export async function simulatedPercentiles(
       handleLoadingPercentChange(Math.floor((i * 100) / rounds));
     }
   }
-  
+
   td.compress();
 
   const percentileValues: number[] = [];
