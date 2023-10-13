@@ -100,11 +100,14 @@ export async function simulatedPercentiles(
       handleLoadingPercentChange(Math.floor((i * 100) / rounds));
     }
   }
+  
   td.compress();
+
   const percentileValues: number[] = [];
   for (const percentile of percentiles) {
     percentileValues.push(td.percentile(percentile) * impressions);
   }
+
   return percentileValues;
 }
 

@@ -6,12 +6,14 @@ import {
   generateSimulatedConversions,
   laplaceNoise,
 } from "../simulate";
-import Link from "next/link";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
+
 import { CampaignStats } from "../campaignStats";
+
+import Link from "next/link";
 
 export default function Play() {
   const NUM_QUESTIONS = 10;
@@ -22,6 +24,7 @@ export default function Play() {
     IncreaseSpend,
     DecreaseSpend,
   }
+
 
   interface Question {
     conversions: number;
@@ -60,6 +63,23 @@ export default function Play() {
     ? savedVariance
     : adjustedVariance(conversionRate);
 
+  const shuffleQuestionOrder = () => {
+    const questionOrder: QuestionIndex[] = [];
+    for (let i = 0; i < NUM_QUESTIONS; i++) {
+      questionOrder.push({ index: i, noised: false });
+      questionOrder.push({ index: i, noised: true });
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+    shuffleArray(questionOrder);
+    setQuestionOrder(questionOrder);
+  };
+
   useEffect(() => {
     const getConversionsAndPreLoad = () => {
       const simulatedConversions: Generator<number> =
@@ -80,43 +100,22 @@ export default function Play() {
         questions.push(question);
       }
       setQuestions(questions);
-    };
-
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-    const shuffleQuestionOrder = () => {
-      const questionOrder: QuestionIndex[] = [];
-      for (let i = 0; i < NUM_QUESTIONS; i++) {
-        questionOrder.push({ index: i, noised: false });
-        questionOrder.push({ index: i, noised: true });
-      }
-      shuffleArray(questionOrder);
-      setQuestionOrder(questionOrder);
+      shuffleQuestionOrder();
     };
 
     getConversionsAndPreLoad();
-    shuffleQuestionOrder();
+
   }, []);
 
   const getCurrentQuestion = () => {
     const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
     const question: Question = questions[questionIndex.index];
     if (questionIndex.noised) {
-      return question.conversions;
-    } else {
       return question.conversions + Math.round(question.noise);
+    } else {
+      return question.conversions;
     }
   };
-
-  const numCorrect = questions.reduce(
-    (count, question) =>
-      question.actualResult === question.noisedResult ? count + 1 : count,
-    0,
-  );
 
   const incrementQuestion = () => {
     if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
@@ -162,40 +161,12 @@ export default function Play() {
             {!isFinished ? (
               <>
                 {!isStarted ? (
-                  <>
-                    <h1 className="max-w-2xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">
-                      Get ready!
-                    </h1>
-
-                    <p className="text-lg leading-8 text-gray-600">
-                      Before starting the game, we need to configure it to your
-                      typical usage. As a reminder, below is your current
-                      configuration.
-                    </p>
-
-                    <CampaignStats
-                      impressions={impressions}
-                      totalConversions={totalConversions}
-                      conversionsPerThousand={conversionPerThousand}
-                      className="mt-6"
-                    />
-
-                    <div className="flex justify-between items-center mt-10">
-                      <Link href="/game/validate">
-                        <button className="mt-10 h-12 w-32 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
-                          <ArrowLeftCircleIcon className="h-8 w-auto" />
-                          Back
-                        </button>
-                      </Link>
-
-                      <button
-                        className="mt-10 h-12 w-56 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-                        onClick={handleStartButtonClick}
-                      >
-                        Start <ArrowRightCircleIcon className="h-8 w-auto" />
-                      </button>
-                    </div>
-                  </>
+                  <StartGame
+                    impressions={impressions}
+                    totalConversions={totalConversions}
+                    conversionsPerThousand={conversionPerThousand}
+                    onChange={handleStartButtonClick}
+                  />
                 ) : (
                   <>
                     <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-500 dark:text-white">
@@ -237,18 +208,108 @@ export default function Play() {
                 )}
               </>
             ) : (
-              <>
-                // TODO: format and results
-                <div> finished! </div>
-                <div>
-                  {" "}
-                  accuracy: {((100 * numCorrect) / NUM_QUESTIONS).toFixed(0)}%
-                </div>
-              </>
+              <EndGame questions={questions} num_questions={NUM_QUESTIONS} />
             )}
           </div>
         </div>
       </section>
     </div>
+  );
+}
+
+function StartGame({
+  impressions,
+  totalConversions,
+  conversionsPerThousand,
+  onChange }) {
+  return (
+    <><h1 className="max-w-2xl py-3 text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto dark:text-white">
+      Get ready!
+    </h1>
+
+      <p className="text-lg leading-8 text-gray-600 dark:text-white">
+        Before starting the game, we need to configure it to your
+        typical usage. As a reminder, below is your current
+        configuration.
+      </p>
+
+      <CampaignStats
+        impressions={impressions}
+        totalConversions={totalConversions}
+        conversionsPerThousand={conversionsPerThousand}
+        className="mt-6"
+      />
+
+      <div className="flex justify-between items-center mt-10">
+        <Link href="/game/validate">
+          <button className="mt-10 h-12 w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
+            <ArrowLeftCircleIcon className="h-8 w-auto" />
+            Back
+          </button>
+        </Link>
+
+        <button
+          className="mt-10 h-12 w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          onClick={onChange}
+        >
+          Start <ArrowRightCircleIcon className="h-8 w-auto" />
+        </button>
+      </div>
+    </>)
+}
+
+function EndGame({ questions, num_questions }) {
+  const numCorrect = questions.reduce(
+    (count, question) =>
+      question.actualResult === question.noisedResult ? count + 1 : count,
+    0,
+  );
+
+  return (
+    <>
+      <div className="justify-center text-center py-3">
+        <div className="text-xl font-semibold leading-6 text-blue-600">Finished!</div>
+        <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
+          Accuracy of results vs noise added
+        </div>
+        <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
+          {((100 * numCorrect) / num_questions).toFixed(0)}%
+        </div>
+        <div>
+          <h2>Results Table</h2>
+          <table className="min-w-fit divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Noised Conversions</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {questions.map((item, index) => (
+                <tr key={index}>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.conversions}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.actualResult ? "No" : "Yes"}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{Math.round(item.noise) + item.conversions}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.noisedResult ? "No" : "Yes"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Link href="/game/configure">
+          <button
+            className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
+          >
+            Let's play again!
+          </button>
+        </Link>
+      </div>
+    </>
   );
 }

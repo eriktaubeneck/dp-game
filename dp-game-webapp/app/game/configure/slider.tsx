@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { generateSimulatedConversions, adjustedVariance } from "../simulate";
+import React from "react";
 
 export function CampaignSizeSlider({ value, onChange }) {
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {

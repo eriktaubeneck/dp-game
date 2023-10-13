@@ -75,9 +75,6 @@ export default function Validate() {
         Variance Validation
       </h1>
       <section className="py-8">
-        <div className="mt-6 max-w-xl lg:mt-0 xl:col-end-1 xl:row-start-1">
-          <p className="text-lg leading-8 text-gray-600">TODO</p>
-        </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="bg-white/60 px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
             <CampaignStats
@@ -141,14 +138,14 @@ export default function Validate() {
 
                 <div className="flex justify-between items-center mt-10">
                   <Link href="/game/configure">
-                    <button className="mt-10 h-12 w-32 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
+                    <button className="mt-10 h-12 w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
                       <ArrowLeftCircleIcon className="h-8 w-auto" />
                       Back
                     </button>
                   </Link>
                   <Link href="/game/play">
                     <button
-                      className="mt-10 h-12 w-56 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+                      className="mt-10 h-12 w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
                       onClick={handleContinueButtonClick}
                     >
                       Continue <ArrowRightCircleIcon className="h-8 w-auto" />
