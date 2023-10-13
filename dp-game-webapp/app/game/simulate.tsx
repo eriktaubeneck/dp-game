@@ -63,14 +63,25 @@ function betaAlphaBeta(mean: number, variance: number): [number, number] {
   return [alpha, alpha * (1 / mean - 1)];
 }
 
-export function simulatedPercentiles(
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function* enumerate<T>(iterable: Iterable<T>): Generator<[T, number]> {
+  let index = 0;
+  for (const item of iterable) {
+    yield [item, index];
+    index++;
+  }
+}
+
+export async function simulatedPercentiles(
   impressions: number,
   conversionRate: number,
   variance: number,
   rounds: number,
   seed: number = 1613149041,
   percentiles: number[] = [0.01, 0.1, 0.5, 0.9, 0.99],
-): number[] {
+  handleLoadingPercentChange: (value: number) => void = () => {},
+): Promise<number[]> {
   var td = new TDigest();
   const conversionCounts: Generator<number> = generateSimulatedConversions(
     impressions,
@@ -79,16 +90,22 @@ export function simulatedPercentiles(
     rounds,
     seed,
   );
-
-  for (const conversionCount of conversionCounts) {
-    td.push(conversionCount);
+  const oneHundredth = Math.floor(rounds / 100);
+  for (const [conversionCount, i] of enumerate(conversionCounts)) {
+    td.push(conversionCount / impressions);
+    if (i % oneHundredth === 0) {
+      // need the sleep here to allow the loading bar to render
+      // only happens 100 times, so only an additional 100ms
+      await sleep(1);
+      handleLoadingPercentChange(Math.floor((i * 100) / rounds));
+    }
   }
   
   td.compress();
 
   const percentileValues: number[] = [];
   for (const percentile of percentiles) {
-    percentileValues.push(td.percentile(percentile));
+    percentileValues.push(td.percentile(percentile) * impressions);
   }
 
   return percentileValues;

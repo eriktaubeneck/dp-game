@@ -14,16 +14,13 @@
     "@stdlib/random-base-beta": "^0.1.0",
     "@stdlib/random-base-binomial": "^0.1.0",
     "@stdlib/random-base-laplace": "^0.1.0",
-    "chart.js": "^4.4.0",
     "next": "13.5.4",
     "react": "^18",
-    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
     "react-range": "^1.8.14",
     "react-slider": "^2.0.6",
-    "tdigest": "^0.1.2",
-    "tw-elements": "^1.0.0"
+    "tdigest": "^0.1.2"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.6",

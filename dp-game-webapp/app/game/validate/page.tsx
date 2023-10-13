@@ -1,9 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  adjustedVariance,
-  simulatedPercentiles,
-} from "../simulate";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { adjustedVariance, simulatedPercentiles } from "../simulate";
 import { CampaignStats } from "../campaignStats";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +13,9 @@ export default function Validate() {
   const [isContinueClicked, setIsContinueClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [percentiles, setPercentiles] = useState<number[]>([]);
+  const [loadingPercent, setLoadingPercent] = useState(0);
+  // hack to deal with React 18 strict mode
+  // const percentilesCalculated = useRef(false);
 
   const conversionRate = parseFloat(
     sessionStorage.getItem("conversionRate") || "",
@@ -39,19 +39,31 @@ export default function Validate() {
     : adjustedVariance(conversionRate);
 
   useEffect(() => {
-    const getPercentiles = () => {
-      const percentiles: number[] = simulatedPercentiles(
+    const getPercentiles = async () => {
+      // this is a hack.
+      // we use a tdigest to estimate the percentiles,
+      // which uses binary trees to track those estimates.
+      // at extreme values of conversionRate, those trees get
+      // unbalanced, slowing down our estimation.
+      // so we settle for less accurate percentiles there
+      const rounds =
+        conversionRate < 0.025 || conversionRate > 0.975 ? 10_000 : 1_000_000;
+
+      const percentiles: number[] = await simulatedPercentiles(
         impressions,
         conversionRate,
         variance,
-        100_000,
+        rounds,
+        1613149041,
+        [0.01, 0.1, 0.5, 0.9, 0.99],
+        setLoadingPercent,
       );
       setPercentiles(percentiles);
       setIsLoading(false);
     };
 
     getPercentiles();
-  }, []);
+  }, [variance]);
 
   const handleContinueButtonClick = () => {
     setIsContinueClicked(!isContinueClicked);
@@ -77,7 +89,21 @@ export default function Validate() {
             </div>
 
             {isLoading ? (
-              <div className="spinner"> Loading...</div>
+              <div className="spinner">
+                {" "}
+                Loading...
+                <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                  <div
+                    className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                    style={{
+                      width: `${Math.max(5, loadingPercent).toFixed(0)}` + "%",
+                    }}
+                  >
+                    {" "}
+                    {loadingPercent}%
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 <div className="mt-6 mb-6 flex-col items-center justify-between">
