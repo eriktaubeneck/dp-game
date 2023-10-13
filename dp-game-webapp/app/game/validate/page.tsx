@@ -40,11 +40,20 @@ export default function Validate() {
 
   useEffect(() => {
     const getPercentiles = async () => {
+      // this is a hack.
+      // we use a tdigest to estimate the percentiles,
+      // which uses binary trees to track those estimates.
+      // at extreme values of conversionRate, those trees get
+      // unbalanced, slowing down our estimation.
+      // so we settle for less accurate percentiles there
+      const rounds =
+        conversionRate < 0.025 || conversionRate > 0.975 ? 10_000 : 1_000_000;
+
       const percentiles: number[] = await simulatedPercentiles(
         impressions,
         conversionRate,
         variance,
-        10_000,
+        rounds,
         1613149041,
         [0.01, 0.1, 0.5, 0.9, 0.99],
         setLoadingPercent,

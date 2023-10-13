@@ -90,11 +90,12 @@ export async function simulatedPercentiles(
     rounds,
     seed,
   );
+  const oneHundredth = Math.floor(rounds / 100);
   for (const [conversionCount, i] of enumerate(conversionCounts)) {
-    td.push(conversionCount);
-    // need the sleep here to allow the loading bar to render
-    // only happens 100 times, so only an additional 100ms
-    if (i % Math.floor(rounds / 100) === 0) {
+    td.push(conversionCount / impressions);
+    if (i % oneHundredth === 0) {
+      // need the sleep here to allow the loading bar to render
+      // only happens 100 times, so only an additional 100ms
       await sleep(1);
       handleLoadingPercentChange(Math.floor((i * 100) / rounds));
     }
@@ -102,7 +103,7 @@ export async function simulatedPercentiles(
   td.compress();
   const percentileValues: number[] = [];
   for (const percentile of percentiles) {
-    percentileValues.push(td.percentile(percentile));
+    percentileValues.push(td.percentile(percentile) * impressions);
   }
   return percentileValues;
 }
