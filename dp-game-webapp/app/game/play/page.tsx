@@ -25,7 +25,6 @@ export default function Play() {
     DecreaseSpend,
   }
 
-
   interface Question {
     conversions: number;
     noise: number;
@@ -104,7 +103,6 @@ export default function Play() {
     };
 
     getConversionsAndPreLoad();
-
   }, []);
 
   const getCurrentQuestion = () => {
@@ -221,16 +219,17 @@ function StartGame({
   impressions,
   totalConversions,
   conversionsPerThousand,
-  onChange }) {
+  onChange,
+}) {
   return (
-    <><h1 className="max-w-2xl py-3 text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto dark:text-white">
-      Get ready!
-    </h1>
+    <>
+      <h1 className="max-w-2xl py-3 text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto dark:text-white">
+        Get ready!
+      </h1>
 
       <p className="text-lg leading-8 text-gray-600 dark:text-white">
-        Before starting the game, we need to configure it to your
-        typical usage. As a reminder, below is your current
-        configuration.
+        Before starting the game, we need to configure it to your typical usage.
+        As a reminder, below is your current configuration.
       </p>
 
       <CampaignStats
@@ -255,7 +254,8 @@ function StartGame({
           Start <ArrowRightCircleIcon className="h-8 w-auto" />
         </button>
       </div>
-    </>)
+    </>
+  );
 }
 
 function EndGame({ questions, num_questions }) {
@@ -268,7 +268,9 @@ function EndGame({ questions, num_questions }) {
   return (
     <>
       <div className="justify-center text-center py-3">
-        <div className="text-xl font-semibold leading-6 text-blue-600">Finished!</div>
+        <div className="text-xl font-semibold leading-6 text-blue-600">
+          Finished!
+        </div>
         <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
           Accuracy of results vs noise added
         </div>
@@ -280,32 +282,63 @@ function EndGame({ questions, num_questions }) {
           <table className="min-w-fit divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</th>
-                <th scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
-                <th scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Noised Conversions</th>
-                <th scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
+                <th
+                  scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Conversions
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Increased Spend?
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Noised Conversions
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Increased Spend?
+                </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-white">
               {questions.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.conversions}</td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.actualResult ? "No" : "Yes"}</td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{Math.round(item.noise) + item.conversions}</td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.noisedResult ? "No" : "Yes"}</td>
+                <tr
+                  key={index}
+                  className={
+                    item.actualResult == item.noisedResult
+                      ? "bg-emerald-50 hover:bg-emerald-200"
+                      : "bg-rose-50 hover:bg-rose-200"
+                  }
+                >
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {item.conversions.toLocaleString()}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {item.actualResult ? "No" : "Yes"}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {(
+                      Math.round(item.noise) + item.conversions
+                    ).toLocaleString()}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {item.noisedResult ? "No" : "Yes"}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <Link href="/game/configure">
-          <button
-            className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
-          >
+          <button className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
             Let's play again!
           </button>
         </Link>
