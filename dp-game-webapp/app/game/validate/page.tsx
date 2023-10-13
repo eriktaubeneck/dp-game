@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  generateSimulatedConversions,
   adjustedVariance,
   simulatedPercentiles,
 } from "../simulate";
@@ -45,7 +44,7 @@ export default function Validate() {
         impressions,
         conversionRate,
         variance,
-        1_000_000,
+        100_000,
       );
       setPercentiles(percentiles);
       setIsLoading(false);

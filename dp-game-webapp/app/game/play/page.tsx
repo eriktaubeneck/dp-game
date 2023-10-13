@@ -117,12 +117,6 @@ export default function Play() {
     }
   };
 
-  const numCorrect = questions.reduce(
-    (count, question) =>
-      question.actualResult === question.noisedResult ? count + 1 : count,
-    0,
-  );
-
   const incrementQuestion = () => {
     if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -214,7 +208,7 @@ export default function Play() {
                 )}
               </>
             ) : (
-              <EndGame numCorrect={numCorrect} num_questions={NUM_QUESTIONS} />
+              <EndGame questions={questions} num_questions={NUM_QUESTIONS} />
             )}
           </div>
         </div>
@@ -264,25 +258,58 @@ function StartGame({
     </>)
 }
 
-function EndGame({ numCorrect, num_questions }) {
+function EndGame({ questions, num_questions }) {
+  const numCorrect = questions.reduce(
+    (count, question) =>
+      question.actualResult === question.noisedResult ? count + 1 : count,
+    0,
+  );
+
   return (
     <>
-    <div className="justify-center text-center py-3">
-      <div className="text-xl font-semibold leading-6 text-blue-600">Finished!</div>
-      <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
-        Accuracy of results vs noise added
+      <div className="justify-center text-center py-3">
+        <div className="text-xl font-semibold leading-6 text-blue-600">Finished!</div>
+        <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
+          Accuracy of results vs noise added
+        </div>
+        <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
+          {((100 * numCorrect) / num_questions).toFixed(0)}%
+        </div>
+        <div>
+          <h2>Results Table</h2>
+          <table className="min-w-fit divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Noised Conversions</th>
+                <th scope="col"
+                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increased Spend?</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {questions.map((item, index) => (
+                <tr key={index}>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.conversions}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.actualResult ? "No" : "Yes"}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{Math.round(item.noise) + item.conversions}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.noisedResult ? "No" : "Yes"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Link href="/game/configure">
+          <button
+            className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
+          >
+            Let's play again!
+          </button>
+        </Link>
       </div>
-      <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
-        {((100 * numCorrect) / num_questions).toFixed(0)}%
-      </div>
-      <Link href="/game/configure">
-        <button
-          className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
-        >
-          Let's play again!
-        </button>
-      </Link>
-    </div>
     </>
   );
 }

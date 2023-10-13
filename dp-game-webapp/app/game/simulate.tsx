@@ -79,14 +79,18 @@ export function simulatedPercentiles(
     rounds,
     seed,
   );
+
   for (const conversionCount of conversionCounts) {
     td.push(conversionCount);
   }
+  
   td.compress();
+
   const percentileValues: number[] = [];
   for (const percentile of percentiles) {
     percentileValues.push(td.percentile(percentile));
   }
+
   return percentileValues;
 }
 
