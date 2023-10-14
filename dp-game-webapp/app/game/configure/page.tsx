@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
 import { CampaignStats } from "../campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { defaultVariance } from "../simulate";
 
 export default function Configure() {
   const savedConversionRate = parseFloat(
@@ -21,6 +22,10 @@ export default function Configure() {
   const handleButtonClick = () => {
     sessionStorage.setItem("conversionRate", conversionRate.toString());
     sessionStorage.setItem("campaignSizeExp", campaignSizeExp.toString());
+    sessionStorage.setItem(
+      "conversionRateVariance",
+      defaultVariance(conversionRate).toString(),
+    );
   };
 
   const handleConversionRateChange = (value: number) => {
