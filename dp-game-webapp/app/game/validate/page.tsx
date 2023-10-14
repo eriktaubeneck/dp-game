@@ -110,7 +110,7 @@ export default function Validate() {
                   handleDecreaseButtonClick={handleDecreaseButtonClick}
                   className=""
                 />
-                <hr className="h-px mt-4 mb-4 bg-gray-200 border-0 dark:bg-gray-700" />
+                <hr className="h-px mt-4 mb-4 bg-gray-200 border-0" />
 
                 <Navigation
                   handleContinueButtonClick={handleContinueButtonClick}
@@ -167,7 +167,7 @@ function Percentiles({ percentiles, impressions, className }) {
                 {Math.round(percentiles[0]).toLocaleString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                {(percentiles[0] / impressions).toFixed(3)}
+                {((percentiles[0] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p10">
@@ -181,7 +181,7 @@ function Percentiles({ percentiles, impressions, className }) {
                 {Math.round(percentiles[1]).toLocaleString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                {(percentiles[1] / impressions).toFixed(3)}
+                {((percentiles[1] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p50">
@@ -195,7 +195,7 @@ function Percentiles({ percentiles, impressions, className }) {
                 {Math.round(percentiles[2]).toLocaleString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                {(percentiles[2] / impressions).toFixed(3)}
+                {((percentiles[2] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p90">
@@ -209,7 +209,7 @@ function Percentiles({ percentiles, impressions, className }) {
                 {Math.round(percentiles[3]).toLocaleString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                {(percentiles[3] / impressions).toFixed(3)}
+                {((percentiles[3] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p99">
@@ -223,7 +223,7 @@ function Percentiles({ percentiles, impressions, className }) {
                 {Math.round(percentiles[4]).toLocaleString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                {(percentiles[4] / impressions).toFixed(3)}
+                {((percentiles[4] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
           </tbody>
