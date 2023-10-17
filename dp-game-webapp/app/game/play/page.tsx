@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  adjustedVariance,
   generateSimulatedConversions,
   laplaceNoise,
 } from "../simulate";
@@ -60,7 +59,7 @@ export default function Play() {
 
   const variance: number = !isNaN(savedVariance)
     ? savedVariance
-    : adjustedVariance(conversionRate);
+    : adjustVariance(conversionRate);
 
   const shuffleQuestionOrder = () => {
     const questionOrder: QuestionIndex[] = [];
@@ -346,3 +345,7 @@ export function EndGame({ questions, num_questions }) {
     </>
   );
 }
+function adjustVariance(conversionRate: number): number {
+  throw new Error("Function not implemented.");
+}
+

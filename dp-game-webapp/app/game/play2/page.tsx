@@ -2,7 +2,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from "react";
 import {
-  adjustedVariance,
   generateSimulatedConversions,
   laplaceNoise,
 } from "../simulate";
@@ -15,9 +14,11 @@ import { CampaignStats } from "../campaignStats";
 
 import Link from "next/link";
 import { EndGame, StartGame } from "../play/page";
+import { AdjustVariance } from "../validate/page";
 
 export default function Play() {
   const NUM_QUESTIONS = 10;
+  const NUM_QUESTIONS_PER_PAGE = 10;
   const SENSITIVITY = 1;
   const EPSILON = 1;
 
@@ -62,7 +63,7 @@ export default function Play() {
 
   const variance: number = !isNaN(savedVariance)
     ? savedVariance
-    : adjustedVariance(conversionRate);
+    : AdjustVariance(conversionRate);
 
   const shuffleQuestionOrder = () => {
     const questionOrder: QuestionIndex[] = [];
@@ -108,8 +109,8 @@ export default function Play() {
 
   }, []);
 
-  const getCurrentQuestion = () => {
-    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
+  const getCurrentQuestion = (index: number) => {
+    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex + index];
     const question: Question = questions[questionIndex.index];
     if (questionIndex.noised) {
       return question.conversions + Math.round(question.noise);
@@ -119,16 +120,16 @@ export default function Play() {
   };
 
   const incrementQuestion = () => {
-    if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    if (currentQuestionIndex + NUM_QUESTIONS_PER_PAGE < NUM_QUESTIONS * 2 - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + NUM_QUESTIONS_PER_PAGE);
     } else {
       setIsFinished(true);
     }
   };
 
-  const handleAnswer = (answer: Answer) => {
+  const handleAnswer = (answer: Answer, index: number) => {
     const questionsCopy = [...questions];
-    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
+    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex + index];
     const question: Question = questions[questionIndex.index];
     const updatedQuestion: Question = {
       conversions: question.conversions,
@@ -141,12 +142,12 @@ export default function Play() {
     setQuestions(questionsCopy);
   };
 
-  const handleDecreaseSpend = () => {
-    handleAnswer(Answer.DecreaseSpend);
+  const handleDecreaseSpend = (index: number) => {
+    handleAnswer(Answer.DecreaseSpend, index);
   };
 
-  const handleIncreaseSpend = () => {
-    handleAnswer(Answer.IncreaseSpend);
+  const handleIncreaseSpend = (index: number) => {
+    handleAnswer(Answer.IncreaseSpend, index);
   };
 
   const handleStartButtonClick = () => {
@@ -154,7 +155,7 @@ export default function Play() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
+    <div>
       <section className="py-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -177,31 +178,31 @@ export default function Play() {
                           conversionsPerThousand={conversionPerThousand}
                           className="mt-6"
                         />
-                        <h2>Compare results</h2>
+                        <h2>Given this result, would you increase or decrease spend?</h2>
                         <table className="min-w-fit divide-y divide-gray-200">
                           <thead className="bg-gray-50">
                             <tr>
                               <th scope="col"
-                                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion 1</th>
+                                className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</th>
                               <th scope="col"
-                                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Increase Spend?</th>
+                                className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Increase/Decrease Spend?</th>
                             </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
-                            {questions.map((item, index) => (
+                            {Array.from({ length: NUM_QUESTIONS_PER_PAGE }, (_, index) => (
                               <tr key={index}>
-                                <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.conversions}</td>
+                                <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getCurrentQuestion(index).toLocaleString()}</td>
                                 <td className="flex items-center mb-4 text-gray-900">
-                                  <div className="flex mt-5 justify-between space-x-3 md:mt-6">
+                                  <div className="flex mt-5 justify-between space-x-4 md:mt-6">
                                     <button
-                                      className="px-3 py-2 text-base font-medium text-white bg-red-700 rounded-lg"
-                                      onClick={handleDecreaseSpend}
+                                      className="px-4 py-2 text-base font-medium text-white bg-red-700 rounded-lg"
+                                      onClick={() => handleDecreaseSpend(index)}
                                     >
                                       Decrease Spend
                                     </button>
                                     <button
-                                      className="px-3 py-2 text-base font-medium text-white bg-green-700 rounded-lg"
-                                      onClick={handleIncreaseSpend}
+                                      className="px-4 py-2 text-base font-medium text-white bg-green-700 rounded-lg"
+                                      onClick={() => handleIncreaseSpend(index)}
                                     >
                                       Increase Spend
                                     </button>
@@ -212,6 +213,14 @@ export default function Play() {
                             ))}
                           </tbody>
                         </table>
+                        <div className="py-4">
+                          <button
+                            className="px-3 py-2 text-base font-medium text-white bg-sky-400 hover:bg-sky-600 rounded-lg justify-center text-center"
+                            onClick={() => incrementQuestion()}
+                          >
+                            Keep playing
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </>
@@ -226,21 +235,3 @@ export default function Play() {
     </div>
   );
 }
-
-/* 
-<div className="mb-4">
-        <p className="mb-2 text-gray-700">Please answer the following question:</p>
-        <div>
-          <input
-            type="radio"
-            id="option1"
-            name="answer"
-            value="option1"
-            checked={selectedOption === 'option1'}
-            onChange={handleOptionChange}
-            className="mr-2"
-          />
-          <label htmlFor="option1">Option 1</label>
-        </div>
-
-        */

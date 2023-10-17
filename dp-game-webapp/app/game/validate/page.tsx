@@ -243,20 +243,33 @@ function Navigation({ handleContinueButtonClick, className }) {
             Back
           </button>
         </Link>
-        <Link href="/game/play">
-          <button
-            className="h-12 w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-            onClick={handleContinueButtonClick}
-          >
-            Continue <ArrowRightCircleIcon className="h-8 w-auto" />
-          </button>
-        </Link>
+        <section className="py-8">
+          <div>
+            <Link href="/game/play">
+              <button
+                className="mt-10 h-12 w-45 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+                onClick={handleContinueButtonClick}
+              >
+                Play Game 1 <ArrowRightCircleIcon className="h-8 w-auto" />
+              </button>
+            </Link></div>
+          <div>
+            <Link href="/game/play2">
+              <button
+                className="mt-10 h-12 w-45 bg-blue-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+                onClick={handleContinueButtonClick}
+              >
+                Play Game 2 <ArrowRightCircleIcon className="h-8 w-auto" />
+              </button>
+            </Link>
+          </div>
+        </section>
       </div>
     </div>
   );
 }
 
-function AdjustVariance({
+export function AdjustVariance({
   handleIncreaseButtonClick,
   handleDecreaseButtonClick,
   className,
