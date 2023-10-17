@@ -13,6 +13,7 @@ import {
 import { CampaignStats } from "../campaignStats";
 
 import Link from "next/link";
+import { AdjustVariance } from "../validate/page";
 
 export default function Play() {
   const NUM_QUESTIONS = 10;
@@ -59,7 +60,7 @@ export default function Play() {
 
   const variance: number = !isNaN(savedVariance)
     ? savedVariance
-    : adjustVariance(conversionRate);
+    : AdjustVariance(conversionRate);
 
   const shuffleQuestionOrder = () => {
     const questionOrder: QuestionIndex[] = [];
@@ -345,7 +346,3 @@ export function EndGame({ questions, num_questions }) {
     </>
   );
 }
-function adjustVariance(conversionRate: number): number {
-  throw new Error("Function not implemented.");
-}
-
