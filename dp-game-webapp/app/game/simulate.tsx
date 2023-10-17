@@ -8,7 +8,7 @@ export function* generateSimulatedConversions(
   conversionRate: number,
   variance: number,
   rounds: number,
-  seed: number = 1613149041,
+  seed: number | undefined,
 ): Generator<number> {
   const conversionRates: Generator<number> = generateSimulatedConversionRates(
     conversionRate,
@@ -17,9 +17,13 @@ export function* generateSimulatedConversions(
     seed,
   );
 
-  var rand = binomial_dist.factory({
-    seed: seed,
-  });
+  if (seed !== undefined) {
+    var rand = binomial_dist.factory({
+      seed: seed,
+    });
+  } else {
+    var rand = binomial_dist.factory();
+  }
 
   for (const conversionRate of conversionRates) {
     yield rand(impressions, conversionRate);
@@ -30,13 +34,17 @@ export function* generateSimulatedConversionRates(
   mean: number,
   variance: number,
   rounds: number,
-  seed: number = 1613149041,
+  seed: number | undefined,
 ): Generator<number> {
   const [alpha, beta] = betaAlphaBeta(mean, variance);
-  var rand = beta_dist.factory(alpha, beta, {
-    seed: seed,
-  });
 
+  if (seed !== undefined) {
+    var rand = beta_dist.factory(alpha, beta, {
+      seed: seed,
+    });
+  } else {
+    var rand = beta_dist.factory(alpha, beta);
+  }
   for (let i = 0; i < rounds; i++) {
     yield rand();
   }
@@ -70,7 +78,7 @@ export async function simulatedPercentiles(
   conversionRate: number,
   variance: number,
   rounds: number,
-  seed: number = 1613149041,
+  seed: number | undefined,
   percentiles: number[] = [0.01, 0.1, 0.5, 0.9, 0.99],
   handleLoadingPercentChange: (value: number) => void = () => {},
 ): Promise<number[]> {
