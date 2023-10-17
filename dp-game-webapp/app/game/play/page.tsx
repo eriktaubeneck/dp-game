@@ -5,6 +5,8 @@ import { generateSimulatedConversions, laplaceNoise } from "../simulate";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
+  ArrowUpCircleIcon,
+  ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import { CampaignStats } from "../campaignStats";
@@ -35,6 +37,7 @@ export default function Play() {
   }
 
   const [isStarted, setIsStarted] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -105,12 +108,21 @@ export default function Play() {
     getConversionsAndPreLoad();
   }, []);
 
-  const getQuestion = (questionIndex: QuestionIndex) => {
+  const getQuestionConversions = (questionIndex: QuestionIndex) => {
     const question: Question = questions[questionIndex.index];
     if (questionIndex.noised) {
       return question.conversions + Math.round(question.noise);
     } else {
       return question.conversions;
+    }
+  };
+
+  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.noisedResult;
+    } else {
+      return question.actualResult;
     }
   };
 
@@ -121,7 +133,7 @@ export default function Play() {
     }
   };
 
-  const isFinished: boolean = !questions.some(
+  const allAnswered: boolean = !questions.some(
     (question: Question) =>
       question.actualResult === undefined ||
       question.noisedResult === undefined,
@@ -151,6 +163,10 @@ export default function Play() {
     incrementQuestion();
   };
 
+  const handleSubmit = () => {
+    setIsFinished(true);
+  };
+
   const handleStartButtonClick = () => {
     setIsStarted(true);
   };
@@ -170,14 +186,17 @@ export default function Play() {
                   />
                 ) : (
                   <QuestionsGame
-                    currentQuestionIndex={currentQuestionIndex}
                     questionOrder={questionOrder}
                     impressions={impressions}
                     totalConversions={totalConversions}
                     conversionsPerThousand={conversionsPerThousand}
-                    getQuestion={getQuestion}
+                    getQuestionConversions={getQuestionConversions}
+                    getQuestionAnswer={getQuestionAnswer}
                     handleDecreaseSpend={handleDecreaseSpend}
                     handleIncreaseSpend={handleIncreaseSpend}
+                    handleSubmit={handleSubmit}
+                    Answer={Answer}
+                    allAnswered={allAnswered}
                   />
                 )}
               </>
@@ -235,28 +254,20 @@ function StartGame({
 }
 
 function QuestionsGame({
-  currentQuestionIndex,
   questionOrder,
   impressions,
   totalConversions,
   conversionsPerThousand,
-  getQuestion,
+  getQuestionConversions,
+  getQuestionAnswer,
   handleDecreaseSpend,
   handleIncreaseSpend,
+  handleSubmit,
+  Answer,
+  allAnswered,
 }) {
   return (
     <>
-      <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-500 dark:text-white">
-        Round {currentQuestionIndex + 1}
-      </h5>
-      <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-        Hypothetical Results
-      </div>
-
-      <p className="mb-2 text-4xl text-grey-700 dark:text-grey-400 justify-end text-center dark:text-white">
-        {getQuestion(questionOrder[currentQuestionIndex]).toLocaleString()}{" "}
-        conversions
-      </p>
       <CampaignStats
         impressions={impressions}
         totalConversions={totalConversions}
@@ -265,25 +276,74 @@ function QuestionsGame({
       />
 
       <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
-        Given this result, would you increase or decrease spend?
+        For each of these results, would you increase or decrease spend?
       </div>
 
-      <div className="flex mt-5 justify-between space-x-3 md:mt-6">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Conversions
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Increase/Decrease Spend?
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {questionOrder.map((questionIndex, index) => {
+            const answer = getQuestionAnswer(questionIndex);
+            const conversions = getQuestionConversions(questionIndex);
+            return (
+              <tr key={index}>
+                <td className="px-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {conversions.toLocaleString()}
+                </td>
+                <td className="flex items-center mt-2 mb-2 text-gray-900">
+                  <div className="flex justify-between space-x-4">
+                    <button
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+                        answer === Answer.DecreaseSpend
+                          ? "bg-cyan-700"
+                          : "bg-cyan-400"
+                      }`}
+                      onClick={() => handleDecreaseSpend(questionIndex)}
+                    >
+                      Decrease{" "}
+                      <ArrowDownCircleIcon className="h-8 w-auto ml-2" />
+                    </button>
+                    <button
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+                        answer === Answer.IncreaseSpend
+                          ? "bg-emerald-700"
+                          : "bg-emerald-400"
+                      }`}
+                      onClick={() => handleIncreaseSpend(questionIndex)}
+                    >
+                      Increase <ArrowUpCircleIcon className="h-8 w-auto ml-2" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="flex justify-end items-center">
         <button
-          className="px-3 py-2 text-base font-medium text-white bg-red-700 rounded-lg"
-          onClick={() =>
-            handleDecreaseSpend(questionOrder[currentQuestionIndex])
-          }
+          className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+            allAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+          }`}
+          onClick={handleSubmit}
+          disabled={!allAnswered}
         >
-          Decrease Spend
-        </button>
-        <button
-          className="px-3 py-2 text-base font-medium text-white bg-green-700 rounded-lg"
-          onClick={() =>
-            handleIncreaseSpend(questionOrder[currentQuestionIndex])
-          }
-        >
-          Increase Spend
+          Submit <ArrowRightCircleIcon className="h-8 w-auto" />
         </button>
       </div>
     </>
