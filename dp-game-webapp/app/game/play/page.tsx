@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  AdjustVariance,
   generateSimulatedConversions,
   laplaceNoise,
 } from "../simulate";
@@ -14,6 +13,7 @@ import {
 import { CampaignStats } from "../campaignStats";
 
 import Link from "next/link";
+import { AdjustVariance } from "../validate/page";
 
 export default function Play() {
   const NUM_QUESTIONS = 10;
