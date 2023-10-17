@@ -256,7 +256,7 @@ function Navigation({ handleContinueButtonClick, className }) {
   );
 }
 
-function AdjustVariance({
+export function AdjustVariance({
   handleIncreaseButtonClick,
   handleDecreaseButtonClick,
   className,
