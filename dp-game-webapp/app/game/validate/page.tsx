@@ -31,11 +31,11 @@ export default function Validate() {
     redirect("/game/configure");
   }
 
-  const default_variance: number = !isNaN(savedVariance)
+  const savedOrDefaultVariance: number = !isNaN(savedVariance)
     ? savedVariance
     : defaultVariance(conversionRate);
 
-  const [variance, setVariance] = useState<number>(default_variance);
+  const [variance, setVariance] = useState<number>(savedOrDefaultVariance);
 
   useEffect(() => {
     const getPercentiles = async () => {

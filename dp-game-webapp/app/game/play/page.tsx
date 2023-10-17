@@ -1,66 +1,81 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  generateSimulatedConversions,
-  laplaceNoise,
-} from "../simulate";
+import { generateSimulatedConversions, laplaceNoise } from "../simulate";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
+  ArrowUpCircleIcon,
+  ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import { CampaignStats } from "../campaignStats";
 
 import Link from "next/link";
-import { AdjustVariance } from "../validate/page";
+import { redirect } from "next/navigation";
+
+enum Answer {
+  IncreaseSpend,
+  DecreaseSpend,
+}
+
+interface Question {
+  conversions: number;
+  noise: number;
+  actualResult?: Answer;
+  noisedResult?: Answer;
+}
+
+interface QuestionIndex {
+  index: number;
+  noised: boolean;
+}
 
 export default function Play() {
-  const NUM_QUESTIONS = 10;
+  const NUM_QUESTIONS = 5;
   const SENSITIVITY = 1;
-  const EPSILON = 1;
-
-  enum Answer {
-    IncreaseSpend,
-    DecreaseSpend,
-  }
-
-  interface Question {
-    conversions: number;
-    noise: number;
-    actualResult?: Answer;
-    noisedResult?: Answer;
-  }
-
-  interface QuestionIndex {
-    index: number;
-    noised: bool;
-  }
+  const STARTING_EPSILON_EXP = 0;
 
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [currentEpsilonExp, setCurrentEpsilonExp] =
+    useState<number>(STARTING_EPSILON_EXP);
 
   const conversionRate = parseFloat(
     sessionStorage.getItem("conversionRate") || "",
   );
 
-  const savedVariance = parseFloat(
-    sessionStorage.getItem("conversionRateVariance") || "",
-  );
-
   const campaignSizeExp = parseInt(
     sessionStorage.getItem("campaignSizeExp") || "",
   );
+
+  const variance = parseFloat(
+    sessionStorage.getItem("conversionRateVariance") || "",
+  );
+
+  const currentEpsilon = Math.pow(10, currentEpsilonExp);
+
+  const formatEpsilon = (epsilonExp) => {
+    return epsilonExp > -4
+      ? Math.pow(10, epsilonExp).toString()
+      : `0.${"0".repeat(Math.abs(epsilonExp))}1`;
+  };
+
+  const currentEpsilonStr = formatEpsilon(currentEpsilonExp);
+  const nextEpsilonStr = formatEpsilon(currentEpsilonExp - 1);
+
+  // redirect in case where values aren't saved (perhaps by directly navigating)
+  if (Number.isNaN(conversionRate) || Number.isNaN(campaignSizeExp)) {
+    redirect("/game/configure");
+  } else if (Number.isNaN(variance)) {
+    redirect("/game/validate");
+  }
+
   const impressions: number = Math.pow(10, campaignSizeExp);
   const totalConversions: number = impressions * conversionRate;
-  const conversionPerThousand: number = 1000 * conversionRate;
-
-  const variance: number = !isNaN(savedVariance)
-    ? savedVariance
-    : AdjustVariance(conversionRate);
+  const conversionsPerThousand: number = 1000 * conversionRate;
 
   const shuffleQuestionOrder = () => {
     const questionOrder: QuestionIndex[] = [];
@@ -69,7 +84,7 @@ export default function Play() {
       questionOrder.push({ index: i, noised: true });
     }
 
-    function shuffleArray(arr) {
+    function shuffleArray(arr: QuestionIndex[]) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -79,53 +94,34 @@ export default function Play() {
     setQuestionOrder(questionOrder);
   };
 
+  const reloadQuestions = () => {
+    const simulatedConversions: Generator<number> =
+      generateSimulatedConversions(
+        impressions,
+        conversionRate,
+        variance,
+        NUM_QUESTIONS,
+      );
+
+    const questions: Question[] = [];
+
+    for (const conversions of simulatedConversions) {
+      const question: Question = {
+        conversions: conversions,
+        noise: laplaceNoise(0, SENSITIVITY, currentEpsilon),
+      };
+      questions.push(question);
+    }
+    setQuestions(questions);
+    shuffleQuestionOrder();
+  };
+
   useEffect(() => {
-    const getConversionsAndPreLoad = () => {
-      const simulatedConversions: Generator<number> =
-        generateSimulatedConversions(
-          impressions,
-          conversionRate,
-          variance,
-          NUM_QUESTIONS,
-        );
+    reloadQuestions();
+  }, [currentEpsilonExp]);
 
-      const questions: Question[] = [];
-
-      for (const conversions of simulatedConversions) {
-        const question: Question = {
-          conversions: conversions,
-          noise: laplaceNoise(0, SENSITIVITY, EPSILON),
-        };
-        questions.push(question);
-      }
-      setQuestions(questions);
-      shuffleQuestionOrder();
-    };
-
-    getConversionsAndPreLoad();
-  }, []);
-
-  const getCurrentQuestion = () => {
-    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
-    const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
-      return question.conversions + Math.round(question.noise);
-    } else {
-      return question.conversions;
-    }
-  };
-
-  const incrementQuestion = () => {
-    if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setIsFinished(true);
-    }
-  };
-
-  const handleAnswer = (answer: Answer) => {
+  const handleAnswer = (answer: Answer, questionIndex: QuestionIndex) => {
     const questionsCopy = [...questions];
-    const questionIndex: QuestionIndex = questionOrder[currentQuestionIndex];
     const question: Question = questions[questionIndex.index];
     const updatedQuestion: Question = {
       conversions: question.conversions,
@@ -138,19 +134,19 @@ export default function Play() {
     setQuestions(questionsCopy);
   };
 
-  const handleDecreaseSpend = () => {
-    handleAnswer(Answer.DecreaseSpend);
-    incrementQuestion();
-  };
-
-  const handleIncreaseSpend = () => {
-    handleAnswer(Answer.IncreaseSpend);
-    incrementQuestion();
+  const handleSubmit = () => {
+    setIsFinished(true);
   };
 
   const handleStartButtonClick = () => {
     setIsStarted(true);
   };
+
+  const handleNextRound = () => {
+    setCurrentEpsilonExp(currentEpsilonExp - 1);
+    setIsFinished(false);
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
       <section className="py-8">
@@ -162,51 +158,35 @@ export default function Play() {
                   <StartGame
                     impressions={impressions}
                     totalConversions={totalConversions}
-                    conversionsPerThousand={conversionPerThousand}
+                    conversionsPerThousand={conversionsPerThousand}
                     onChange={handleStartButtonClick}
                   />
                 ) : (
                   <>
-                    <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-500 dark:text-white">
-                      Round {currentQuestionIndex + 1}
-                    </h5>
-                    <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-                      Hypothetical Results
-                    </div>
-
-                    <p className="mb-2 text-4xl text-grey-700 dark:text-grey-400 justify-end text-center dark:text-white">
-                      {getCurrentQuestion().toLocaleString()} conversions
-                    </p>
                     <CampaignStats
                       impressions={impressions}
                       totalConversions={totalConversions}
-                      conversionsPerThousand={conversionPerThousand}
+                      conversionsPerThousand={conversionsPerThousand}
                       className="mt-6"
                     />
 
-                    <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
-                      Given this result, would you increase or decrease spend?
-                    </div>
-
-                    <div className="flex mt-5 justify-between space-x-3 md:mt-6">
-                      <button
-                        className="px-3 py-2 text-base font-medium text-white bg-red-700 rounded-lg"
-                        onClick={handleDecreaseSpend}
-                      >
-                        Decrease Spend
-                      </button>
-                      <button
-                        className="px-3 py-2 text-base font-medium text-white bg-green-700 rounded-lg"
-                        onClick={handleIncreaseSpend}
-                      >
-                        Increase Spend
-                      </button>
-                    </div>
+                    <QuestionsGame
+                      questions={questions}
+                      questionOrder={questionOrder}
+                      handleAnswer={handleAnswer}
+                      handleSubmit={handleSubmit}
+                    />
                   </>
                 )}
               </>
             ) : (
-              <EndGame questions={questions} num_questions={NUM_QUESTIONS} />
+              <EndGame
+                questions={questions}
+                num_questions={NUM_QUESTIONS}
+                currentEpsilonStr={currentEpsilonStr}
+                nextEpsilonStr={nextEpsilonStr}
+                handleNextRound={handleNextRound}
+              />
             )}
           </div>
         </div>
@@ -258,7 +238,128 @@ function StartGame({
   );
 }
 
-function EndGame({ questions, num_questions }) {
+function QuestionsGame({
+  questions,
+  questionOrder,
+  handleAnswer,
+  handleSubmit,
+}) {
+  const allAnswered: boolean = !questions.some(
+    (question: Question) =>
+      question.actualResult === undefined ||
+      question.noisedResult === undefined,
+  );
+
+  const getQuestionConversions = (questionIndex: QuestionIndex) => {
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.conversions + Math.round(question.noise);
+    } else {
+      return question.conversions;
+    }
+  };
+
+  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.noisedResult;
+    } else {
+      return question.actualResult;
+    }
+  };
+
+  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.DecreaseSpend, questionIndex);
+  };
+
+  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.IncreaseSpend, questionIndex);
+  };
+
+  return (
+    <>
+      <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
+        For each of these results, would you increase or decrease spend?
+      </div>
+
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Conversions
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Increase/Decrease Spend?
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {questionOrder.map((questionIndex, index) => {
+            const answer = getQuestionAnswer(questionIndex);
+            const conversions = getQuestionConversions(questionIndex);
+            return (
+              <tr key={index}>
+                <td className="px-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {conversions.toLocaleString()}
+                </td>
+                <td className="flex items-center mt-2 mb-2 text-gray-900">
+                  <div className="flex justify-between space-x-4">
+                    <button
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+                        answer === Answer.DecreaseSpend
+                          ? "bg-cyan-700"
+                          : "bg-cyan-400"
+                      }`}
+                      onClick={() => handleDecreaseSpend(questionIndex)}
+                    >
+                      Decrease{" "}
+                      <ArrowDownCircleIcon className="h-8 w-auto ml-2" />
+                    </button>
+                    <button
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+                        answer === Answer.IncreaseSpend
+                          ? "bg-emerald-700"
+                          : "bg-emerald-400"
+                      }`}
+                      onClick={() => handleIncreaseSpend(questionIndex)}
+                    >
+                      Increase <ArrowUpCircleIcon className="h-8 w-auto ml-2" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="flex justify-end items-center">
+        <button
+          className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+            allAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+          }`}
+          onClick={handleSubmit}
+          disabled={!allAnswered}
+        >
+          Submit <ArrowRightCircleIcon className="h-8 w-auto" />
+        </button>
+      </div>
+    </>
+  );
+}
+
+function EndGame({
+  questions,
+  num_questions,
+  currentEpsilonStr,
+  nextEpsilonStr,
+  handleNextRound,
+}) {
   const numCorrect = questions.reduce(
     (count, question) =>
       question.actualResult === question.noisedResult ? count + 1 : count,
@@ -272,7 +373,7 @@ function EndGame({ questions, num_questions }) {
           Finished!
         </div>
         <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
-          Accuracy of results vs noise added
+          Accuracy of results vs noise added ({"\u03B5"}={currentEpsilonStr})
         </div>
         <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
           {((100 * numCorrect) / num_questions).toFixed(0)}%
@@ -337,11 +438,19 @@ function EndGame({ questions, num_questions }) {
             </tbody>
           </table>
         </div>
-        <Link href="/game/configure">
-          <button className="mt-10 h-12 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
-            Let's play again!
+        <div className="flex justify-between items-center mt-10">
+          <Link href="/game/configure">
+            <button className="mt-10 h-16 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
+              Start Over
+            </button>
+          </Link>
+          <button
+            className="mt-10 h-16 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
+            onClick={handleNextRound}
+          >
+            Continue to Next Level ({"\u03B5"}={nextEpsilonStr})
           </button>
-        </Link>
+        </div>
       </div>
     </>
   );
