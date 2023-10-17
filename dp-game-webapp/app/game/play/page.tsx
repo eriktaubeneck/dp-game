@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  adjustedVariance,
+  AdjustVariance,
   generateSimulatedConversions,
   laplaceNoise,
 } from "../simulate";
@@ -60,7 +60,7 @@ export default function Play() {
 
   const variance: number = !isNaN(savedVariance)
     ? savedVariance
-    : adjustedVariance(conversionRate);
+    : AdjustVariance(conversionRate);
 
   const shuffleQuestionOrder = () => {
     const questionOrder: QuestionIndex[] = [];
