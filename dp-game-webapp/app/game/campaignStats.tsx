@@ -15,10 +15,10 @@ export function CampaignStats({
 }: CampaignStatsProps) {
   return (
     <div className={className}>
-      <div className="flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
-        Campaign Stats
+      <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
+        Campaign Stats (as configured)
       </div>
-      <div className="mb-6 flex-col items-center justify-between">
+      <div className="mb-6 flex-col items-center justify-between text-gray-600">
         Number of Impressions: {impressions.toLocaleString()}
         <br />
         Expected Number of Conversions (Total):{" "}

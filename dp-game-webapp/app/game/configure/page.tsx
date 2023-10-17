@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
 import { CampaignStats } from "../campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { defaultVariance } from "../simulate";
 
 export default function Configure() {
   const savedConversionRate = parseFloat(
@@ -21,6 +22,10 @@ export default function Configure() {
   const handleButtonClick = () => {
     sessionStorage.setItem("conversionRate", conversionRate.toString());
     sessionStorage.setItem("campaignSizeExp", campaignSizeExp.toString());
+    sessionStorage.setItem(
+      "conversionRateVariance",
+      defaultVariance(conversionRate).toString(),
+    );
   };
 
   const handleConversionRateChange = (value: number) => {
@@ -45,7 +50,7 @@ export default function Configure() {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="bg-white/60 px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
-            <div className="mb-6 flex-col items-center justify-between text-lg font-semibold underline underline-offset-auto">
+            <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
               Configuration
             </div>
 
@@ -61,6 +66,8 @@ export default function Configure() {
                 onChange={handleConversionRateChange}
               />
             </div>
+
+            <hr className="h-px mt-4 mb-4 bg-gray-200 border-0 dark:bg-gray-700" />
 
             <CampaignStats
               impressions={impressions}
