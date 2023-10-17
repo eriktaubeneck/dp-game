@@ -31,10 +31,10 @@ export function ConversionRateSlider({ value, onChange }) {
     onChange(conversionRate);
   };
 
-  const displayValue = ((5 / 1000) * sliderValue).toFixed(3);
+  const displayValue = ((5 / 10) * sliderValue).toFixed(1);
   return (
     <>
-      <p>Average Conversion Rate: {displayValue}</p>
+      <p>Average Conversion Rate: {displayValue}%</p>
       <input
         type="range"
         min="1"
