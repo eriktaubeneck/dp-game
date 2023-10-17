@@ -217,7 +217,7 @@ export default function Play() {
   );
 }
 
-function StartGame({
+export function StartGame({
   impressions,
   totalConversions,
   conversionsPerThousand,
@@ -258,7 +258,7 @@ function StartGame({
     </>)
 }
 
-function EndGame({ questions, num_questions }) {
+export function EndGame({ questions, num_questions }) {
   const numCorrect = questions.reduce(
     (count, question) =>
       question.actualResult === question.noisedResult ? count + 1 : count,
