@@ -14,33 +14,32 @@ import { CampaignStats } from "../campaignStats";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+enum Answer {
+  IncreaseSpend,
+  DecreaseSpend,
+}
+
+interface Question {
+  conversions: number;
+  noise: number;
+  actualResult?: Answer;
+  noisedResult?: Answer;
+}
+
+interface QuestionIndex {
+  index: number;
+  noised: boolean;
+}
+
 export default function Play() {
   const NUM_QUESTIONS = 10;
   const SENSITIVITY = 1;
   const EPSILON = 1;
 
-  enum Answer {
-    IncreaseSpend,
-    DecreaseSpend,
-  }
-
-  interface Question {
-    conversions: number;
-    noise: number;
-    actualResult?: Answer;
-    noisedResult?: Answer;
-  }
-
-  interface QuestionIndex {
-    index: number;
-    noised: boolean;
-  }
-
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
 
   const conversionRate = parseFloat(
     sessionStorage.getItem("conversionRate") || "",
@@ -108,37 +107,6 @@ export default function Play() {
     getConversionsAndPreLoad();
   }, []);
 
-  const getQuestionConversions = (questionIndex: QuestionIndex) => {
-    const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
-      return question.conversions + Math.round(question.noise);
-    } else {
-      return question.conversions;
-    }
-  };
-
-  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
-    const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
-      return question.noisedResult;
-    } else {
-      return question.actualResult;
-    }
-  };
-
-  const incrementQuestion = () => {
-    if (currentQuestionIndex < NUM_QUESTIONS * 2 - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-    }
-  };
-
-  const allAnswered: boolean = !questions.some(
-    (question: Question) =>
-      question.actualResult === undefined ||
-      question.noisedResult === undefined,
-  );
-
   const handleAnswer = (answer: Answer, questionIndex: QuestionIndex) => {
     const questionsCopy = [...questions];
     const question: Question = questions[questionIndex.index];
@@ -151,16 +119,6 @@ export default function Play() {
 
     questionsCopy[questionIndex.index] = updatedQuestion;
     setQuestions(questionsCopy);
-  };
-
-  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.DecreaseSpend, questionIndex);
-    incrementQuestion();
-  };
-
-  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.IncreaseSpend, questionIndex);
-    incrementQuestion();
   };
 
   const handleSubmit = () => {
@@ -185,19 +143,21 @@ export default function Play() {
                     onChange={handleStartButtonClick}
                   />
                 ) : (
-                  <QuestionsGame
-                    questionOrder={questionOrder}
-                    impressions={impressions}
-                    totalConversions={totalConversions}
-                    conversionsPerThousand={conversionsPerThousand}
-                    getQuestionConversions={getQuestionConversions}
-                    getQuestionAnswer={getQuestionAnswer}
-                    handleDecreaseSpend={handleDecreaseSpend}
-                    handleIncreaseSpend={handleIncreaseSpend}
-                    handleSubmit={handleSubmit}
-                    Answer={Answer}
-                    allAnswered={allAnswered}
-                  />
+                  <>
+                    <CampaignStats
+                      impressions={impressions}
+                      totalConversions={totalConversions}
+                      conversionsPerThousand={conversionsPerThousand}
+                      className="mt-6"
+                    />
+
+                    <QuestionsGame
+                      questions={questions}
+                      questionOrder={questionOrder}
+                      handleAnswer={handleAnswer}
+                      handleSubmit={handleSubmit}
+                    />
+                  </>
                 )}
               </>
             ) : (
@@ -254,27 +214,45 @@ function StartGame({
 }
 
 function QuestionsGame({
+  questions,
   questionOrder,
-  impressions,
-  totalConversions,
-  conversionsPerThousand,
-  getQuestionConversions,
-  getQuestionAnswer,
-  handleDecreaseSpend,
-  handleIncreaseSpend,
+  handleAnswer,
   handleSubmit,
-  Answer,
-  allAnswered,
 }) {
+  const allAnswered: boolean = !questions.some(
+    (question: Question) =>
+      question.actualResult === undefined ||
+      question.noisedResult === undefined,
+  );
+
+  const getQuestionConversions = (questionIndex: QuestionIndex) => {
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.conversions + Math.round(question.noise);
+    } else {
+      return question.conversions;
+    }
+  };
+
+  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
+    const question: Question = questions[questionIndex.index];
+    if (questionIndex.noised) {
+      return question.noisedResult;
+    } else {
+      return question.actualResult;
+    }
+  };
+
+  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.DecreaseSpend, questionIndex);
+  };
+
+  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.IncreaseSpend, questionIndex);
+  };
+
   return (
     <>
-      <CampaignStats
-        impressions={impressions}
-        totalConversions={totalConversions}
-        conversionsPerThousand={conversionsPerThousand}
-        className="mt-6"
-      />
-
       <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
         For each of these results, would you increase or decrease spend?
       </div>
