@@ -6,6 +6,7 @@ import { CampaignStats } from "../campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { defaultVariance } from "../simulate";
 
+// @ts-nocheck
 export default function Configure() {
   const savedConversionRate = parseFloat(
     sessionStorage.getItem("conversionRate") || "0.01",

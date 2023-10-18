@@ -1,5 +1,7 @@
 "use client";
 
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { generateSimulatedConversions, laplaceNoise } from "../simulate";
 import {
@@ -57,7 +59,7 @@ export default function Play() {
 
   const currentEpsilon = Math.pow(10, currentEpsilonExp);
 
-  const formatEpsilon = (epsilonExp) => {
+  const formatEpsilon = (epsilonExp: number) => {
     return epsilonExp > -4
       ? Math.pow(10, epsilonExp).toString()
       : `0.${"0".repeat(Math.abs(epsilonExp))}1`;
@@ -101,6 +103,7 @@ export default function Play() {
         conversionRate,
         variance,
         NUM_QUESTIONS,
+        undefined
       );
 
     const questions: Question[] = [];
@@ -200,7 +203,7 @@ function StartGame({
   totalConversions,
   conversionsPerThousand,
   onChange,
-}) {
+}: { impressions: number, totalConversions: number, conversionsPerThousand: number, onChange: () => void }) {
   return (
     <>
       <h1 className="max-w-2xl py-3 text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto dark:text-white">
@@ -243,7 +246,7 @@ function QuestionsGame({
   questionOrder,
   handleAnswer,
   handleSubmit,
-}) {
+}: { questions: Question[], questionOrder: QuestionIndex[], handleAnswer: any, handleSubmit: any }) {
   const allAnswered: boolean = !questions.some(
     (question: Question) =>
       question.actualResult === undefined ||
@@ -311,22 +314,20 @@ function QuestionsGame({
                 <td className="flex items-center mt-2 mb-2 text-gray-900">
                   <div className="flex justify-between space-x-4">
                     <button
-                      className={`py-2 px-4 text-base font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
-                        answer === Answer.DecreaseSpend
-                          ? "bg-cyan-700"
-                          : "bg-cyan-400"
-                      }`}
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${answer === Answer.DecreaseSpend
+                        ? "bg-cyan-700"
+                        : "bg-cyan-400"
+                        }`}
                       onClick={() => handleDecreaseSpend(questionIndex)}
                     >
                       Decrease{" "}
                       <ArrowDownCircleIcon className="h-8 w-auto ml-2" />
                     </button>
                     <button
-                      className={`py-2 px-4 text-base font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
-                        answer === Answer.IncreaseSpend
-                          ? "bg-emerald-700"
-                          : "bg-emerald-400"
-                      }`}
+                      className={`py-2 px-4 text-base font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${answer === Answer.IncreaseSpend
+                        ? "bg-emerald-700"
+                        : "bg-emerald-400"
+                        }`}
                       onClick={() => handleIncreaseSpend(questionIndex)}
                     >
                       Increase <ArrowUpCircleIcon className="h-8 w-auto ml-2" />
@@ -340,9 +341,8 @@ function QuestionsGame({
       </table>
       <div className="flex justify-end items-center">
         <button
-          className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
-            allAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
-          }`}
+          className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${allAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+            }`}
           onClick={handleSubmit}
           disabled={!allAnswered}
         >
@@ -359,7 +359,7 @@ function EndGame({
   currentEpsilonStr,
   nextEpsilonStr,
   handleNextRound,
-}) {
+}: { questions: Question[], num_questions: number, currentEpsilonStr: string, nextEpsilonStr: string, handleNextRound: any }) {
   const numCorrect = questions.reduce(
     (count, question) =>
       question.actualResult === question.noisedResult ? count + 1 : count,

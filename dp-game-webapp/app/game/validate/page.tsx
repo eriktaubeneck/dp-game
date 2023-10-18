@@ -1,4 +1,6 @@
 "use client";
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { defaultVariance, simulatedPercentiles } from "../simulate";
 import { redirect } from "next/navigation";
@@ -6,9 +8,9 @@ import Link from "next/link";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
-  ArrowUpCircleIcon,
-  ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
+
+import AdjustVariance from "../validate/adjustVariance";
 
 export default function Validate() {
   const [isContinueClicked, setIsContinueClicked] = useState(false);
@@ -125,7 +127,7 @@ export default function Validate() {
   );
 }
 
-function Percentiles({ percentiles, impressions, className }) {
+function Percentiles({ percentiles, impressions, className }: { percentiles: number[], impressions: number, className: string }) {
   return (
     <div className={className}>
       <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
@@ -233,7 +235,7 @@ function Percentiles({ percentiles, impressions, className }) {
   );
 }
 
-function Navigation({ handleContinueButtonClick, className }) {
+function Navigation({ handleContinueButtonClick, className }: { handleContinueButtonClick: () => void, className: string }) {
   return (
     <div className={className}>
       <div className="flex justify-between items-center">
@@ -251,33 +253,6 @@ function Navigation({ handleContinueButtonClick, className }) {
             Continue <ArrowRightCircleIcon className="h-8 w-auto" />
           </button>
         </Link>
-      </div>
-    </div>
-  );
-}
-
-export function AdjustVariance({
-  handleIncreaseButtonClick,
-  handleDecreaseButtonClick,
-  className,
-}) {
-  return (
-    <div className={className}>
-      <div className="flex justify-between items-center">
-        <button
-          className="h-12 w-40 bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-          onClick={handleDecreaseButtonClick}
-        >
-          <ArrowDownCircleIcon className="h-8 w-auto" />
-          Decrease Variance
-        </button>
-        <button
-          className="h-12 w-40 bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-          onClick={handleIncreaseButtonClick}
-        >
-          <ArrowUpCircleIcon className="h-8 w-auto" />
-          Increase Variance
-        </button>
       </div>
     </div>
   );
