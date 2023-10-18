@@ -86,13 +86,13 @@ export default function Validate() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
+    <div className="mx-auto max-w-7xl px-2 lg:px-6 py-32 sm:py-40 lg:px-8">
       <h1 className="max-w-2xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">
         Variance Validation
       </h1>
       <section className="py-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
-          <div className="bg-white/60 px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
+          <div className="bg-white/60 px-2 lg:px-6 py-6 text-gray-600 shadow sm:rounded-lg sm:px-12">
             {isLoading ? (
               <div className="spinner">
                 {" "}
@@ -119,13 +119,13 @@ export default function Validate() {
                 <AdjustVariance
                   handleIncreaseButtonClick={handleIncreaseButtonClick}
                   handleDecreaseButtonClick={handleDecreaseButtonClick}
-                  className=""
+                  className="pt-6 space-x-4"
                 />
                 <hr className="h-px mt-4 mb-4 bg-gray-200 border-0" />
 
                 <Navigation
                   handleContinueButtonClick={handleContinueButtonClick}
-                  className="mt-6"
+                  className="pt-6 space-x-4"
                 />
               </>
             )}
@@ -157,19 +157,19 @@ function Percentiles({
             <tr>
               <th
                 scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
               >
                 Percentile
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
               >
-                Num Conversions
+                Number of Conversions
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
               >
                 Conversion Rate
               </th>
@@ -177,71 +177,71 @@ function Percentiles({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             <tr key="p01">
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                <b> Very bad campaign</b>
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+                <b> Very bad</b>
                 <br />
                 (1 out of a 100)
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {Math.round(percentiles[0]).toLocaleString()}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {((percentiles[0] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p10">
               {" "}
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                <b> Bad campaign</b>
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+                <b> Bad</b>
                 <br />
                 (1 out of a 10)
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {Math.round(percentiles[1]).toLocaleString()}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {((percentiles[1] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p50">
               {" "}
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                <b> Median campaign</b>
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+                <b> Median </b>
                 <br />
                 (5 out of a 10)
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {Math.round(percentiles[2]).toLocaleString()}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {((percentiles[2] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p90">
               {" "}
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                <b> Good campaign</b>
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+                <b> Good </b>
                 <br />
                 (1 out of a 10)
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {Math.round(percentiles[3]).toLocaleString()}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {((percentiles[3] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p99">
               {" "}
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                <b> Very good campaign</b>
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+                <b> Very good </b>
                 <br />
                 (1 out of a 100)
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {Math.round(percentiles[4]).toLocaleString()}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
                 {((percentiles[4] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
@@ -263,14 +263,14 @@ function Navigation({
     <div className={className}>
       <div className="flex justify-between items-center">
         <Link href="/game/configure">
-          <button className="h-12 w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
+          <button className="h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
             <ArrowLeftCircleIcon className="h-8 w-auto" />
             Back
           </button>
         </Link>
         <Link href="/game/play">
           <button
-            className="h-12 w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+            className="h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
             onClick={handleContinueButtonClick}
           >
             Continue <ArrowRightCircleIcon className="h-8 w-auto" />
