@@ -1,5 +1,7 @@
 "use client";
 
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { generateSimulatedConversions, laplaceNoise } from "../simulate";
 import {
@@ -38,26 +40,34 @@ export default function Play() {
 
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [conversionRate, setConversionRate] = useState<number>(0.01);
+  const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
+  const [variance, setVariance] = useState<number>(0.00001);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
   const [currentEpsilonExp, setCurrentEpsilonExp] =
     useState<number>(STARTING_EPSILON_EXP);
 
-  const conversionRate = parseFloat(
-    sessionStorage.getItem("conversionRate") || "",
-  );
+  useEffect(() => {
+    const savedConversionRate = parseFloat(
+      sessionStorage.getItem("conversionRate") || "0.01",
+    );
 
-  const campaignSizeExp = parseInt(
-    sessionStorage.getItem("campaignSizeExp") || "",
-  );
+    const savedCampaignSizeExp = parseInt(
+      sessionStorage.getItem("campaignSizeExp") || "6",
+    );
+    const savedVariance = parseFloat(
+      sessionStorage.getItem("conversionRateVariance") || "",
+    );
 
-  const variance = parseFloat(
-    sessionStorage.getItem("conversionRateVariance") || "",
-  );
+    setConversionRate(savedConversionRate);
+    setCampaignSizeExp(savedCampaignSizeExp);
+    setVariance(savedVariance);
+  }, []);
 
   const currentEpsilon = Math.pow(10, currentEpsilonExp);
 
-  const formatEpsilon = (epsilonExp) => {
+  const formatEpsilon = (epsilonExp: number) => {
     return epsilonExp > -4
       ? Math.pow(10, epsilonExp).toString()
       : `0.${"0".repeat(Math.abs(epsilonExp))}1`;
@@ -101,6 +111,7 @@ export default function Play() {
         conversionRate,
         variance,
         NUM_QUESTIONS,
+        undefined,
       );
 
     const questions: Question[] = [];
@@ -200,6 +211,11 @@ function StartGame({
   totalConversions,
   conversionsPerThousand,
   onChange,
+}: {
+  impressions: number;
+  totalConversions: number;
+  conversionsPerThousand: number;
+  onChange: () => void;
 }) {
   return (
     <>
@@ -243,6 +259,11 @@ function QuestionsGame({
   questionOrder,
   handleAnswer,
   handleSubmit,
+}: {
+  questions: Question[];
+  questionOrder: QuestionIndex[];
+  handleAnswer: any;
+  handleSubmit: any;
 }) {
   const allAnswered: boolean = !questions.some(
     (question: Question) =>
@@ -359,6 +380,12 @@ function EndGame({
   currentEpsilonStr,
   nextEpsilonStr,
   handleNextRound,
+}: {
+  questions: Question[];
+  num_questions: number;
+  currentEpsilonStr: string;
+  nextEpsilonStr: string;
+  handleNextRound: any;
 }) {
   const numCorrect = questions.reduce(
     (count, question) =>

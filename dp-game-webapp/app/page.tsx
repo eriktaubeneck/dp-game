@@ -1,9 +1,7 @@
-import Image from 'next/image'
-import React from 'react';
-import Link from 'next/link'
+import React from "react";
+import Link from "next/link";
 
 export default function Example() {
-
   return (
     <>
       <div className="flex flex-1 justify-center max-w-10xl px-6 py-32 sm:py-40 lg:px-8">
@@ -22,10 +20,13 @@ export default function Example() {
         </div>
       </div>
       <div className="flex flex-1 justify-center">
-        <Link href="/game" className="text-2xl font-semibold leading-6 text-blue-600">
+        <Link
+          href="/game"
+          className="text-2xl font-semibold leading-6 text-blue-600"
+        >
           Let's Play! <span aria-hidden="true">&rarr;</span>
         </Link>
       </div>
     </>
-  )
+  );
 }
