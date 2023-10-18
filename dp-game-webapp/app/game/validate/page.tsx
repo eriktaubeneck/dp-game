@@ -17,27 +17,36 @@ export default function Validate() {
   const [isLoading, setIsLoading] = useState(true);
   const [percentiles, setPercentiles] = useState<number[]>([]);
   const [loadingPercent, setLoadingPercent] = useState(0);
+  const [conversionRate, setConversionRate] = useState<number>(0.01);
+  const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
+  const [variance, setVariance] = useState<number>(0.00001);
 
-  const conversionRate = parseFloat(
-    sessionStorage.getItem("conversionRate") || "",
-  );
-  const savedVariance = parseFloat(
-    sessionStorage.getItem("conversionRateVariance") || "",
-  );
-  const campaignSizeExp = parseInt(
-    sessionStorage.getItem("campaignSizeExp") || "",
-  );
+  useEffect(() => {
+    const savedConversionRate = parseFloat(
+      sessionStorage.getItem("conversionRate") || "0.01",
+    );
+
+    const savedCampaignSizeExp = parseInt(
+      sessionStorage.getItem("campaignSizeExp") || "6",
+    );
+    const savedVariance = parseFloat(
+      sessionStorage.getItem("conversionRateVariance") || "",
+    );
+
+    const savedOrDefaultVariance: number = !isNaN(savedVariance)
+      ? savedVariance
+      : defaultVariance(conversionRate);
+
+    setConversionRate(savedConversionRate);
+    setCampaignSizeExp(savedCampaignSizeExp);
+    setVariance(savedOrDefaultVariance);
+  }, []);
+
   const impressions: number = Math.pow(10, campaignSizeExp);
 
   if (isNaN(conversionRate) || isNaN(impressions)) {
     redirect("/game/configure");
   }
-
-  const savedOrDefaultVariance: number = !isNaN(savedVariance)
-    ? savedVariance
-    : defaultVariance(conversionRate);
-
-  const [variance, setVariance] = useState<number>(savedOrDefaultVariance);
 
   useEffect(() => {
     const getPercentiles = async () => {
@@ -127,7 +136,15 @@ export default function Validate() {
   );
 }
 
-function Percentiles({ percentiles, impressions, className }: { percentiles: number[], impressions: number, className: string }) {
+function Percentiles({
+  percentiles,
+  impressions,
+  className,
+}: {
+  percentiles: number[];
+  impressions: number;
+  className: string;
+}) {
   return (
     <div className={className}>
       <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
@@ -235,7 +252,13 @@ function Percentiles({ percentiles, impressions, className }: { percentiles: num
   );
 }
 
-function Navigation({ handleContinueButtonClick, className }: { handleContinueButtonClick: () => void, className: string }) {
+function Navigation({
+  handleContinueButtonClick,
+  className,
+}: {
+  handleContinueButtonClick: () => void;
+  className: string;
+}) {
   return (
     <div className={className}>
       <div className="flex justify-between items-center">

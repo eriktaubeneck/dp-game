@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
 import { CampaignStats } from "../campaignStats";
@@ -8,14 +8,21 @@ import { defaultVariance } from "../simulate";
 
 // @ts-nocheck
 export default function Configure() {
-  const savedConversionRate = parseFloat(
-    sessionStorage.getItem("conversionRate") || "0.01",
-  );
-  const [conversionRate, setConversionRate] = useState(savedConversionRate);
-  const savedCampaignSizeExp = parseInt(
-    sessionStorage.getItem("campaignSizeExp") || "6",
-  );
-  const [campaignSizeExp, setCampaignSizeExp] = useState(savedCampaignSizeExp);
+  const [conversionRate, setConversionRate] = useState<number>(0.01);
+  const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
+
+  useEffect(() => {
+    const savedConversionRate = parseFloat(
+      sessionStorage.getItem("conversionRate") || "0.01",
+    );
+
+    const savedCampaignSizeExp = parseInt(
+      sessionStorage.getItem("campaignSizeExp") || "6",
+    );
+    setConversionRate(savedConversionRate);
+    setCampaignSizeExp(savedCampaignSizeExp);
+  }, []);
+
   const impressions: number = Math.pow(10, campaignSizeExp);
   const totalConversions: number = impressions * conversionRate;
   const conversionPerThousand: number = 1000 * conversionRate;
