@@ -4,8 +4,8 @@ import Link from "next/link";
 export default function Example() {
   return (
     <>
-      <div className="flex flex-1 justify-center max-w-10xl px-6 py-32 sm:py-40 lg:px-8">
-        <h1 className="max-w-xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">
+      <div className="lg:flex lg:flex-1 lg:justify-center max-w-10xl px-6 py-12 lg:py-20 lg:px-8 lg:space-x-8">
+        <h1 className="max-w-xl text-xl font-bold tracking-tight text-gray-900 lg:text-6xl lg:col-span-2 xl:col-auto">
           Welcome to the Differential Privacy Game!
         </h1>
         <br />
