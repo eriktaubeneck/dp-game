@@ -159,10 +159,10 @@ export default function Play() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
-      <section className="py-8">
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[510px]">
-          <div className="max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div className="mx-auto max-w-7xl px-2 lg:px-6 py-32 sm:py-40 lg:px-8">
+      <section className="">
+        <div className="sm:mx-auto sm:w-full sm:max-w-[510px]">
+          <div className="max-w-full px-2 lg:px-6 py-6 bg-white/60 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             {!isFinished ? (
               <>
                 {!isStarted ? (
@@ -178,7 +178,7 @@ export default function Play() {
                       impressions={impressions}
                       totalConversions={totalConversions}
                       conversionsPerThousand={conversionsPerThousand}
-                      className="mt-6"
+                      className=""
                     />
 
                     <QuestionsGame
@@ -235,16 +235,16 @@ function StartGame({
         className="mt-6"
       />
 
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex justify-between items-center mt-10 space-x-4">
         <Link href="/game/validate">
-          <button className="mt-10 h-12 w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
+          <button className="mt-10 h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
             <ArrowLeftCircleIcon className="h-8 w-auto" />
             Back
           </button>
         </Link>
 
         <button
-          className="mt-10 h-12 w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          className="mt-10 h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
           onClick={onChange}
         >
           Start <ArrowRightCircleIcon className="h-8 w-auto" />
@@ -326,13 +326,13 @@ function QuestionsGame({
             const conversions = getQuestionConversions(questionIndex);
             return (
               <tr key={index}>
-                <td className="px-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
                   {conversions.toLocaleString()}
                 </td>
-                <td className="flex items-center mt-2 mb-2 text-gray-900">
-                  <div className="flex justify-between space-x-4">
+                <td className="flex items-center justify-around mt-2 mb-2 text-gray-900">
+                  <div className="flex justify-between space-x-1 lg:space-x-4">
                     <button
-                      className={`py-2 px-4 text-base font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+                      className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
                         answer === Answer.DecreaseSpend
                           ? "bg-cyan-700"
                           : "bg-cyan-400"
@@ -340,17 +340,18 @@ function QuestionsGame({
                       onClick={() => handleDecreaseSpend(questionIndex)}
                     >
                       Decrease{" "}
-                      <ArrowDownCircleIcon className="h-8 w-auto ml-2" />
+                      <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
                     </button>
                     <button
-                      className={`py-2 px-4 text-base font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+                      className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
                         answer === Answer.IncreaseSpend
                           ? "bg-emerald-700"
                           : "bg-emerald-400"
                       }`}
                       onClick={() => handleIncreaseSpend(questionIndex)}
                     >
-                      Increase <ArrowUpCircleIcon className="h-8 w-auto ml-2" />
+                      Increase{" "}
+                      <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
                     </button>
                   </div>
                 </td>
@@ -465,7 +466,7 @@ function EndGame({
             </tbody>
           </table>
         </div>
-        <div className="flex justify-between items-center mt-10">
+        <div className="flex justify-between items-center mt-10 space-x-4">
           <Link href="/game/configure">
             <button className="mt-10 h-16 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
               Start Over
