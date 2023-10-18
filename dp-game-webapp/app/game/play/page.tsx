@@ -406,34 +406,35 @@ function EndGame({
         <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
           {((100 * numCorrect) / num_questions).toFixed(0)}%
         </div>
-        <div>
-          <h2>Results Table</h2>
+        <h2>Results Table</h2>
+        <div className="flex justify-center">
           <table className="min-w-fit divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th
                   scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Conversions
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Increased Spend?
+                  Decision
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Noised Conversions
+                  Noised <br />
+                  Conversions
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Increased Spend?
+                  Decision
                 </th>
               </tr>
             </thead>
@@ -447,19 +448,27 @@ function EndGame({
                       : "bg-rose-50 hover:bg-rose-200"
                   }
                 >
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                     {item.conversions.toLocaleString()}
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                    {item.actualResult ? "No" : "Yes"}
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {item.actualResult ? (
+                      <ArrowDownCircleIcon className="h-8 w-auto" />
+                    ) : (
+                      <ArrowUpCircleIcon className="h-8 w-auto" />
+                    )}
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                     {(
                       Math.round(item.noise) + item.conversions
                     ).toLocaleString()}
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                    {item.noisedResult ? "No" : "Yes"}
+                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                    {item.noisedResult ? (
+                      <ArrowDownCircleIcon className="h-8 w-auto" />
+                    ) : (
+                      <ArrowUpCircleIcon className="h-8 w-auto" />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -468,12 +477,12 @@ function EndGame({
         </div>
         <div className="flex justify-between items-center mt-10 space-x-4">
           <Link href="/game/configure">
-            <button className="mt-10 h-16 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
+            <button className="bg-emerald-400 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
               Start Over
             </button>
           </Link>
           <button
-            className="mt-10 h-16 w-48 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
+            className="bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
             onClick={handleNextRound}
           >
             Continue to Next Level ({"\u03B5"}={nextEpsilonStr})
