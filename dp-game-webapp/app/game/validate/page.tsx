@@ -104,7 +104,6 @@ export default function Validate() {
                       width: `${Math.max(5, loadingPercent).toFixed(0)}` + "%",
                     }}
                   >
-                    {" "}
                     {loadingPercent}%
                   </div>
                 </div>
@@ -178,7 +177,7 @@ function Percentiles({
           <tbody className="bg-white divide-y divide-gray-200">
             <tr key="p01">
               <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
-                <b> Very bad</b>
+                <b>Very bad</b>
                 <br />
                 (1 out of a 100)
               </td>
@@ -190,9 +189,8 @@ function Percentiles({
               </td>
             </tr>
             <tr key="p10">
-              {" "}
               <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
-                <b> Bad</b>
+                <b>Bad</b>
                 <br />
                 (1 out of a 10)
               </td>
@@ -204,9 +202,8 @@ function Percentiles({
               </td>
             </tr>
             <tr key="p50">
-              {" "}
               <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
-                <b> Median </b>
+                <b>Median</b>
                 <br />
                 (5 out of a 10)
               </td>
@@ -218,9 +215,8 @@ function Percentiles({
               </td>
             </tr>
             <tr key="p90">
-              {" "}
               <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
-                <b> Good </b>
+                <b>Good</b>
                 <br />
                 (1 out of a 10)
               </td>
@@ -232,9 +228,8 @@ function Percentiles({
               </td>
             </tr>
             <tr key="p99">
-              {" "}
               <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
-                <b> Very good </b>
+                <b>Very good</b>
                 <br />
                 (1 out of a 100)
               </td>
