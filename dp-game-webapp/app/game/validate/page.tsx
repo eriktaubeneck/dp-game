@@ -2,7 +2,12 @@
 // @ts-nocheck
 
 import React, { useEffect, useState } from "react";
-import { defaultVariance, simulatedPercentiles } from "../simulate";
+import {
+  defaultVariance,
+  simulatedPercentiles,
+  increaseVariance,
+  decreaseVariance,
+} from "../simulate";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
@@ -19,7 +24,7 @@ export default function Validate() {
   const [loadingPercent, setLoadingPercent] = useState(0);
   const [conversionRate, setConversionRate] = useState<number>(0.01);
   const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
-  const [variance, setVariance] = useState<number>(0.00001);
+  const [variance, setVariance] = useState<number>(10);
 
   useEffect(() => {
     const savedConversionRate = parseFloat(
@@ -50,20 +55,24 @@ export default function Validate() {
 
   useEffect(() => {
     const getPercentiles = async () => {
-      const rounds = 1_000_000;
-      setIsLoading(true);
-      const percentiles: number[] = await simulatedPercentiles(
-        impressions,
-        conversionRate,
-        variance,
-        rounds,
-        1613149041,
-        [0.01, 0.1, 0.5, 0.9, 0.99],
-        setLoadingPercent,
-      );
-      setPercentiles(percentiles);
-      setIsLoading(false);
-      setLoadingPercent(0);
+      // this is a bad hack so that this runs only after
+      // variance is updated from the default given to useState
+      if (variance < 10) {
+        const rounds = 1_000_000;
+        setIsLoading(true);
+        const percentiles: number[] = await simulatedPercentiles(
+          impressions,
+          conversionRate,
+          variance,
+          rounds,
+          1613149041,
+          [0.01, 0.1, 0.5, 0.9, 0.99],
+          setLoadingPercent,
+        );
+        setPercentiles(percentiles);
+        setIsLoading(false);
+        setLoadingPercent(0);
+      }
     };
 
     getPercentiles();
@@ -74,13 +83,13 @@ export default function Validate() {
   };
 
   const handleDecreaseButtonClick = () => {
-    const new_variance = variance / 2;
+    const new_variance = decreaseVariance(conversionRate, variance);
     setVariance(new_variance);
     sessionStorage.setItem("conversionRateVariance", new_variance.toString());
   };
 
   const handleIncreaseButtonClick = () => {
-    const new_variance = variance * 2;
+    const new_variance = increaseVariance(conversionRate, variance);
     setVariance(new_variance);
     sessionStorage.setItem("conversionRateVariance", new_variance.toString());
   };
