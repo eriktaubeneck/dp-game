@@ -4,6 +4,7 @@ from enum import Enum
 from scipy.stats import betabinom, laplace
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from privacy_bound import plot_prob_by_eps
 
 
 def simulate(N, α, β, E, s, size, decision_fn):
@@ -94,7 +95,6 @@ def plot_decisions(
     plt.gca().spines['right'].set_visible(False)
 
     plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
-    plt.show()
 
 
 if __name__ == "__main__":
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         ('p99', 0.99),
     ]
 
-    version = 'maintain, various rules'
+    version = 'median w/ laplace individual decision'
 
     match version:
         case 'median':
@@ -165,3 +165,20 @@ if __name__ == "__main__":
                 α, β, s, E, size, N_exp_start, N_exp_end, p_lower_upper_decision_fn,
                 decision_args, title, linestyles
             )
+        case 'median w/ laplace individual decision':
+            decision_args = [
+                ('median', 0.5)
+            ]
+            title = 'DP Effect on Median Decision Rule'
+            linestyles = ['-']
+            E = [2**x for x in range(-22, 6)]
+            mu = (0, s)
+            plot_decisions(
+                α, β, s, E, size, N_exp_start, N_exp_end, p_decision_fn, decision_args,
+                title, linestyles
+            )
+            plot_prob_by_eps(mu, E, linestyle='--')
+            plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
+
+
+plt.show()
