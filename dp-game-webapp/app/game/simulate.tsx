@@ -50,12 +50,48 @@ export function* generateSimulatedConversionRates(
   }
 }
 
+function betaDistributionVariance(alpha: number, beta: number): number {
+  return (
+    (alpha * beta) / ((alpha + beta) * (alpha + beta) * (alpha + beta + 1))
+  );
+}
+
 export function defaultVariance(mean: number): number {
-  // default to something very small comparied to mean
-  // and adjust from there.
-  // for extreme values of mean, larger values of variance
-  // cause percentile Monte Carlo to go very slow.
-  return mean / 1000;
+  // we start with (alpha, beta) = (1.2695280130777336, 26.876825491735)
+  // which is from the dp-game/data-analysis work.
+  // we then use the provied mean to update (alpha, beta) while maintaining variance
+  // we then constrain (alpha, beta) to both be > 2.
+  // we want (alpha, beta) both > 1 for approriate distirbution shape
+  // (e.g. no concentration at 0 or 1)
+  // we use 2 so that we have room to either increase or decrease from the default
+
+  const alphaFit = 1.2695280130777336;
+  const betaFit = 26.876825491735;
+  const variance = betaDistributionVariance(alphaFit, betaFit);
+  const [alpha, beta] = betaAlphaBeta(mean, variance);
+  const x = Math.max(2, Math.min(alpha, beta));
+  const k = alpha < beta ? x / alpha : x / beta;
+  const adjustedAlpha = k * alpha;
+  const adjustedBeta = k * beta;
+  const adjustedVariance = betaDistributionVariance(
+    adjustedAlpha,
+    adjustedBeta,
+  );
+  return adjustedVariance;
+}
+
+export function increaseVariance(mean: number, variance: number): number {
+  const [alpha, beta] = betaAlphaBeta(mean, variance);
+  const k =
+    alpha < beta ? ((alpha - 1) / 2 + 1) / alpha : ((beta - 1) / 2 + 1) / beta;
+  return betaDistributionVariance(k * alpha, k * beta);
+}
+
+export function decreaseVariance(mean: number, variance: number): number {
+  const [alpha, beta] = betaAlphaBeta(mean, variance);
+  const k =
+    alpha < beta ? ((alpha - 1) * 2 + 1) / alpha : ((beta - 1) * 2 + 1) / beta;
+  return betaDistributionVariance(k * alpha, k * beta);
 }
 
 function betaAlphaBeta(mean: number, variance: number): [number, number] {

@@ -29,6 +29,28 @@ def observed_beta_dist_parameters(dataframe):
     return (α_fit, β_fit)
 
 
+def plot_beta_distribution(α, β, plot, label=None, title=None, show=True, N=1000):
+    x = numpy.linspace(0, 1, 1000)
+    pdf_fit = beta.pdf(x, α, β)
+
+    if not label:
+        label = f"Beta({α}, {β})"
+
+    plot.plot(x, pdf_fit, lw=1, label=label)
+
+    if not title:
+        title = "Beta Distribution"
+
+    if not show:
+        return plot
+
+    plt.rcParams['font.family'] = 'Helvetica Neue'
+    plt.ylabel('PDF')
+    plt.title(title)
+    plt.legend()
+    plt.show()
+
+
 def plot_implied_beta_distributions(α, β, induced_means):
     x = numpy.linspace(0, 1, 1000)
     pdf_fit = beta.pdf(x, α, β)
@@ -64,3 +86,29 @@ def beta_variance(α, β):
 def beta_α_β(mean, variance):
     α = (mean*mean)*(((1-mean)/variance) - (1/mean))
     return α, α * (1/mean - 1)
+
+
+def adjust_α_β(α, β):
+    """adjusts α, β so that they are both >= 2, maintaining the mean"""
+    x = max(2, min(α, β))
+    if α < β:
+        k = x/α
+    else:
+        k = x/β
+    return k*α, k*β
+
+
+def increaseVariance(α, β):
+    if α < β:
+        k = ((α - 1)/2 + 1)/α
+    else:
+        k = ((β - 1)/2 + 1)/β
+    return k*α, k*β
+
+
+def decreaseVariance(α, β):
+    if α < β:
+        k = ((α - 1)*2 + 1)/α
+    else:
+        k = ((β - 1)*2 + 1)/β
+    return k*α, k*β
