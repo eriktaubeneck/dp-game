@@ -1,6 +1,34 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import laplace
+from scipy.stats import laplace, norm
+from tqdm import tqdm
+
+
+def plot_repeated_laplace(μ, ε, N, rounds):
+    """
+    Demonstration of taking the mean of N repeated values
+    with Laplace noise added, which converges to N(μ, 1/(ε *sqrt(N))).
+    """
+
+    fig, ax1 = plt.subplots()
+
+    values = []
+    for r in tqdm(range(rounds)):
+        values.append(np.mean(laplace.rvs(μ, 1/ε, size=N)))
+    hist_title = (
+        f"Histogram of simulated average of N values"
+        f" drawn from Laplace({μ}, {1/ε})"
+        )
+    ax1.hist(values, bins=100, color='blue', alpha=0.7, label=hist_title)
+    x = np.linspace(μ - 1/ε, μ + 1/ε, 1000)
+    laplace_pdf = laplace.pdf(x, loc=μ, scale=1/ε)
+    ax2 = ax1.twinx()
+    norm_pdf = norm.pdf(x, loc=μ, scale=1/(ε * np.sqrt(N)))
+    ax2.plot(x, laplace_pdf, label=f"Laplace({μ}, {1/ε})")
+    ax2.plot(x, norm_pdf, label=f"Normal({μ}, {1/(ε * np.sqrt(N))})")
+    plt.ylim(0, plt.ylim()[1])
+    plt.xlim(μ - 1/ε, μ + 1/ε)
+    plt.title(f'Distribution of averaging {N} repeated draws from a Laplace')
 
 
 def plot_laplace_curves(mu, eps):
@@ -34,7 +62,7 @@ def plot_prob_by_eps(mu, E, linestyle=None):
 
 
 if __name__ == "__main__":
-    version = 'laplace curves'
+    version = 'average laplace'
 
     mu = (0, 1)
     match version:
@@ -45,4 +73,7 @@ if __name__ == "__main__":
             E = [2**x for x in range(-18, 10)]
             plot_prob_by_eps(mu, E)
             plt.title('Prob of correct individual decision')
-            plt.show()
+        case 'average laplace':
+            plot_repeated_laplace(0, .1, 1_000, 100_000)
+
+    plt.show()
