@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import { generateSimulatedConversions, laplaceNoise } from "../simulate";
+import { ExponentialNumber } from "../../exponentialNumber";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
@@ -42,7 +43,7 @@ interface QuestionIndex {
 export default function Play() {
   const NUM_QUESTIONS = 5;
   const SENSITIVITY = 1;
-  const STARTING_EPSILON_EXP = 0;
+  const STARTING_EPSILON_POWER_OF_TEN = 0;
 
   const [gameState, setGameState] = useState<GameState>(GameState.Start);
   const [conversionRate, setConversionRate] = useState<number>(0.01);
@@ -50,8 +51,14 @@ export default function Play() {
   const [variance, setVariance] = useState<number>(0.00001);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
-  const [currentEpsilonExp, setCurrentEpsilonExp] =
-    useState<number>(STARTING_EPSILON_EXP);
+  const [currentEpsilon, setCurrentEpsilon] = useState<ExponentialNumber>(
+    new ExponentialNumber(STARTING_EPSILON_POWER_OF_TEN, 10),
+  );
+
+  const nextEpsilon = new ExponentialNumber(
+    currentEpsilon.exponent - 1,
+    currentEpsilon.base,
+  );
 
   useEffect(() => {
     const savedConversionRate = parseFloat(
@@ -69,17 +76,6 @@ export default function Play() {
     setCampaignSizeExp(savedCampaignSizeExp);
     setVariance(savedVariance);
   }, []);
-
-  const currentEpsilon = Math.pow(10, currentEpsilonExp);
-
-  const formatEpsilon = (epsilonExp: number) => {
-    return epsilonExp > -4
-      ? Math.pow(10, epsilonExp).toString()
-      : `0.${"0".repeat(Math.abs(epsilonExp))}1`;
-  };
-
-  const currentEpsilonStr = formatEpsilon(currentEpsilonExp);
-  const nextEpsilonStr = formatEpsilon(currentEpsilonExp - 1);
 
   // redirect in case where values aren't saved (perhaps by directly navigating)
   if (Number.isNaN(conversionRate) || Number.isNaN(campaignSizeExp)) {
@@ -124,7 +120,7 @@ export default function Play() {
     for (const conversions of simulatedConversions) {
       const question: Question = {
         conversions: conversions,
-        noise: laplaceNoise(0, SENSITIVITY, currentEpsilon),
+        noise: laplaceNoise(0, SENSITIVITY, currentEpsilon.value),
       };
       questions.push(question);
     }
@@ -134,7 +130,7 @@ export default function Play() {
 
   useEffect(() => {
     reloadQuestions();
-  }, [currentEpsilonExp]);
+  }, [currentEpsilon]);
 
   const handleAnswer = (answer: Answer, questionIndex: QuestionIndex) => {
     const questionsCopy = [...questions];
@@ -159,7 +155,7 @@ export default function Play() {
   };
 
   const handleNextRound = () => {
-    setCurrentEpsilonExp(currentEpsilonExp - 1);
+    setCurrentEpsilon(nextEpsilon);
     setGameState(GameState.Playing);
   };
 
@@ -202,8 +198,8 @@ export default function Play() {
                     <EndGame
                       questions={questions}
                       num_questions={NUM_QUESTIONS}
-                      currentEpsilonStr={currentEpsilonStr}
-                      nextEpsilonStr={nextEpsilonStr}
+                      currentEpsilon={currentEpsilon}
+                      nextEpsilon={nextEpsilon}
                       handleNextRound={handleNextRound}
                     />
                   );
@@ -388,14 +384,14 @@ function QuestionsGame({
 function EndGame({
   questions,
   num_questions,
-  currentEpsilonStr,
-  nextEpsilonStr,
+  currentEpsilon,
+  nextEpsilon,
   handleNextRound,
 }: {
   questions: Question[];
   num_questions: number;
-  currentEpsilonStr: string;
-  nextEpsilonStr: string;
+  currentEpsilon: ExponentialNumber;
+  nextEpsilon: ExponentialNumber;
   handleNextRound: any;
 }) {
   const numCorrect = questions.reduce(
@@ -411,7 +407,8 @@ function EndGame({
           Finished!
         </div>
         <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
-          Accuracy of results vs noise added ({"\u03B5"}={currentEpsilonStr})
+          Accuracy of results vs noise added ({"\u03B5"}=
+          {currentEpsilon.toString()})
         </div>
         <div className="py-3 text-xl font-bold leading-6 text-gray-900 dark:text-white">
           {((100 * numCorrect) / num_questions).toFixed(0)}%
@@ -495,7 +492,7 @@ function EndGame({
             className="bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
             onClick={handleNextRound}
           >
-            Continue to Next Level ({"\u03B5"}={nextEpsilonStr})
+            Continue to Next Level ({"\u03B5"}={nextEpsilon.toString()})
           </button>
         </div>
       </div>
