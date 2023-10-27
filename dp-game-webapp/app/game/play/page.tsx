@@ -16,6 +16,12 @@ import { CampaignStats } from "../campaignStats";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+enum GameState {
+  Start,
+  Playing,
+  Finished,
+}
+
 enum Answer {
   IncreaseSpend,
   DecreaseSpend,
@@ -38,8 +44,7 @@ export default function Play() {
   const SENSITIVITY = 1;
   const STARTING_EPSILON_EXP = 0;
 
-  const [isStarted, setIsStarted] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
+  const [gameState, setGameState] = useState<GameState>(GameState.Start);
   const [conversionRate, setConversionRate] = useState<number>(0.01);
   const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
   const [variance, setVariance] = useState<number>(0.00001);
@@ -145,17 +150,17 @@ export default function Play() {
     setQuestions(questionsCopy);
   };
 
-  const handleSubmit = () => {
-    setIsFinished(true);
+  const setGameStatePlaying = () => {
+    setGameState(GameState.Playing);
   };
 
-  const handleStartButtonClick = () => {
-    setIsStarted(true);
+  const handleSubmit = () => {
+    setGameState(GameState.Finished);
   };
 
   const handleNextRound = () => {
     setCurrentEpsilonExp(currentEpsilonExp - 1);
-    setIsFinished(false);
+    setGameState(GameState.Playing);
   };
 
   return (
@@ -163,42 +168,47 @@ export default function Play() {
       <section className="">
         <div className="sm:mx-auto sm:w-full sm:max-w-[510px]">
           <div className="max-w-full px-2 lg:px-6 py-6 bg-white/60 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            {!isFinished ? (
-              <>
-                {!isStarted ? (
-                  <StartGame
-                    impressions={impressions}
-                    totalConversions={totalConversions}
-                    conversionsPerThousand={conversionsPerThousand}
-                    onChange={handleStartButtonClick}
-                  />
-                ) : (
-                  <>
-                    <CampaignStats
+            {(() => {
+              switch (gameState) {
+                case GameState.Start:
+                  return (
+                    <StartGame
                       impressions={impressions}
                       totalConversions={totalConversions}
                       conversionsPerThousand={conversionsPerThousand}
-                      className=""
+                      onChange={setGameStatePlaying}
                     />
+                  );
+                case GameState.Playing:
+                  return (
+                    <>
+                      <CampaignStats
+                        impressions={impressions}
+                        totalConversions={totalConversions}
+                        conversionsPerThousand={conversionsPerThousand}
+                        className=""
+                      />
 
-                    <QuestionsGame
+                      <QuestionsGame
+                        questions={questions}
+                        questionOrder={questionOrder}
+                        handleAnswer={handleAnswer}
+                        handleSubmit={handleSubmit}
+                      />
+                    </>
+                  );
+                case GameState.Finished:
+                  return (
+                    <EndGame
                       questions={questions}
-                      questionOrder={questionOrder}
-                      handleAnswer={handleAnswer}
-                      handleSubmit={handleSubmit}
+                      num_questions={NUM_QUESTIONS}
+                      currentEpsilonStr={currentEpsilonStr}
+                      nextEpsilonStr={nextEpsilonStr}
+                      handleNextRound={handleNextRound}
                     />
-                  </>
-                )}
-              </>
-            ) : (
-              <EndGame
-                questions={questions}
-                num_questions={NUM_QUESTIONS}
-                currentEpsilonStr={currentEpsilonStr}
-                nextEpsilonStr={nextEpsilonStr}
-                handleNextRound={handleNextRound}
-              />
-            )}
+                  );
+              }
+            })()}
           </div>
         </div>
       </section>
