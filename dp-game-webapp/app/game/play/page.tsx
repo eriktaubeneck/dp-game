@@ -21,12 +21,15 @@ export default function Play() {
   const NUM_QUESTIONS = 1;
   const SENSITIVITY = 1;
   const STARTING_EPSILON_POWER_OF_TEN = 0;
+  const STARTING_CAMPAIGN_SIZE_POWER_OF_TEN = 6;
 
   const [gameState, setGameState] = useState<GameState>(GameState.Configure);
   const [conversionRate, setConversionRate] = useState<number>(0.01);
-  const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
   const [variance, setVariance] = useState<number>(
     defaultVariance(conversionRate),
+  );
+  const [campaignSize, setCampaignSize] = useState<ExponentialNumber>(
+    new ExponentialNumber(STARTING_CAMPAIGN_SIZE_POWER_OF_TEN, 10),
   );
   const [currentEpsilon, setCurrentEpsilon] = useState<ExponentialNumber>(
     new ExponentialNumber(STARTING_EPSILON_POWER_OF_TEN, 10),
@@ -41,8 +44,6 @@ export default function Play() {
     currentEpsilon.exponent - 1,
     currentEpsilon.base,
   );
-
-  const impressions: number = Math.pow(10, campaignSizeExp);
 
   const setGameStateConfigure = () => {
     setGameState(GameState.Configure);
@@ -76,8 +77,8 @@ export default function Play() {
                     <Configure
                       conversionRate={conversionRate}
                       setConversionRate={setConversionRate}
-                      campaignSizeExp={campaignSizeExp}
-                      setCampaignSizeExp={setCampaignSizeExp}
+                      campaignSize={campaignSize}
+                      setCampaignSize={setCampaignSize}
                       setGameStateValidate={setGameStateValidate}
                     />
                   );
@@ -85,9 +86,9 @@ export default function Play() {
                   return (
                     <Validate
                       conversionRate={conversionRate}
-                      campaignSizeExp={campaignSizeExp}
                       variance={variance}
                       setVariance={setVariance}
+                      campaignSize={campaignSize}
                       setGameStateConfigure={setGameStateConfigure}
                       setGameStateStart={setGameStateStart}
                     />
@@ -96,7 +97,7 @@ export default function Play() {
                 case GameState.Start:
                   return (
                     <StartGame
-                      impressions={impressions}
+                      impressions={campaignSize.value}
                       conversionRate={conversionRate}
                       setGameStatePlaying={setGameStatePlaying}
                       setGameStateValidate={setGameStateValidate}
@@ -107,7 +108,7 @@ export default function Play() {
                     <>
                       <QuestionsGame
                         setAnsweredQuestions={setAnsweredQuestions}
-                        impressions={impressions}
+                        impressions={campaignSize.value}
                         conversionRate={conversionRate}
                         variance={variance}
                         sensitivity={SENSITIVITY}

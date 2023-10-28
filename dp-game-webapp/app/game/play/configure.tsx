@@ -3,28 +3,23 @@ import React from "react";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
 import { CampaignStats } from "../campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { ExponentialNumber } from "../../exponentialNumber";
 
 export default function Configure({
   conversionRate,
   setConversionRate,
-  campaignSizeExp,
-  setCampaignSizeExp,
+  campaignSize,
+  setCampaignSize,
   setGameStateValidate,
 }: {
   conversionRate: number;
   setConversionRate: (value: number) => void;
-  campaignSizeExp: number;
-  setCampaignSizeExp: (value: number) => void;
+  campaignSize: ExponentialNumber;
+  setCampaignSize: (value: ExponentialNumber) => void;
   setGameStateValidate: () => void;
 }) {
-  const impressions: number = Math.pow(10, campaignSizeExp);
-
   const handleConversionRateChange = (value: number) => {
     setConversionRate(value);
-  };
-
-  const handleCampaignSizeChange = (value: number) => {
-    setCampaignSizeExp(value);
   };
 
   return (
@@ -47,8 +42,8 @@ export default function Configure({
 
             <div className="flex-col items-center justify-between">
               <CampaignSizeSlider
-                value={campaignSizeExp}
-                onChange={handleCampaignSizeChange}
+                campaignSize={campaignSize}
+                setCampaignSize={setCampaignSize}
               />
             </div>
             <div className="mt-6 flex-col items-center justify-between">
@@ -61,7 +56,7 @@ export default function Configure({
             <hr className="h-px mt-4 mb-4 bg-gray-200 border-0 dark:bg-gray-700" />
 
             <CampaignStats
-              impressions={impressions}
+              impressions={campaignSize.value}
               conversionRate={conversionRate}
               className="mt-6"
             />

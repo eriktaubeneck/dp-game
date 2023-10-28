@@ -13,48 +13,43 @@ import {
 } from "@heroicons/react/24/outline";
 
 import AdjustVariance from "./adjustVariance";
+import { ExponentialNumber } from "../../exponentialNumber";
 
 export default function Validate({
   conversionRate,
-  campaignSizeExp,
   variance,
   setVariance,
+  campaignSize,
   setGameStateConfigure,
   setGameStateStart,
 }: {
   conversionRate: number;
-  campaignSizeExp: number;
   variance: number;
   setVariance: (value: number) => void;
+  campaignSize: ExponentialNumber;
   setGameStateConfigure: () => void;
   setGameStateStart: () => void;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [percentiles, setPercentiles] = useState<number[]>([]);
-  const [loadingPercent, setLoadingPercent] = useState(0);
-
-  const impressions: number = Math.pow(10, campaignSizeExp);
+  const [loadingPercent, setLoadingPercent] = useState<number>(0);
 
   useEffect(() => {
     const getPercentiles = async () => {
-      // this is a bad hack so that this runs only after
-      // variance is updated from the default given to useState
-      if (variance < 10) {
-        const rounds = 1_000_000;
-        setIsLoading(true);
-        const percentiles: number[] = await simulatedPercentiles(
-          impressions,
-          conversionRate,
-          variance,
-          rounds,
-          1613149041,
-          [0.01, 0.1, 0.5, 0.9, 0.99],
-          setLoadingPercent,
-        );
-        setPercentiles(percentiles);
-        setIsLoading(false);
-        setLoadingPercent(0);
-      }
+      const rounds = 1_000_000;
+      setIsLoading(true);
+      const percentiles: number[] = await simulatedPercentiles(
+        campaignSize.value,
+        conversionRate,
+        variance,
+        rounds,
+        1613149041,
+        [0.01, 0.1, 0.5, 0.9, 0.99],
+        setLoadingPercent,
+      );
+      setPercentiles(percentiles);
+      setIsLoading(false);
+      setLoadingPercent(0);
     };
 
     getPercentiles();
@@ -97,7 +92,7 @@ export default function Validate({
               <>
                 <Percentiles
                   percentiles={percentiles}
-                  impressions={impressions}
+                  impressions={campaignSize.value}
                   className=""
                 />
                 <AdjustVariance
