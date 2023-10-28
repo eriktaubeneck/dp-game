@@ -1,23 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { CampaignStats } from "../campaignStats";
 
 export default function StartGame({
   impressions,
-  totalConversions,
-  conversionsPerThousand,
-  clickStart,
+  conversionRate,
+  setGameStatePlaying,
+  setGameStateValidate,
 }: {
   impressions: number;
-  totalConversions: number;
-  conversionsPerThousand: number;
-  clickStart: () => void;
+  conversionRate: number;
+  setGameStatePlaying: () => void;
+  setGameStateValidate: () => void;
 }) {
   return (
     <>
@@ -32,22 +31,22 @@ export default function StartGame({
 
       <CampaignStats
         impressions={impressions}
-        totalConversions={totalConversions}
-        conversionsPerThousand={conversionsPerThousand}
+        conversionRate={conversionRate}
         className="mt-6"
       />
 
       <div className="flex justify-between items-center mt-10 space-x-4">
-        <Link href="/game/validate">
-          <button className="mt-10 h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
-            <ArrowLeftCircleIcon className="h-8 w-auto" />
-            Back
-          </button>
-        </Link>
+        <button
+          className="mt-10 h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          onClick={setGameStateValidate}
+        >
+          <ArrowLeftCircleIcon className="h-8 w-auto" />
+          Back
+        </button>
 
         <button
           className="mt-10 h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-          onClick={clickStart}
+          onClick={setGameStatePlaying}
         >
           Start <ArrowRightCircleIcon className="h-8 w-auto" />
         </button>

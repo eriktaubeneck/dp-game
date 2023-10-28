@@ -1,15 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { redirect } from "next/navigation";
-
 import { ExponentialNumber } from "../../exponentialNumber";
-import { CampaignStats } from "../campaignStats";
+import { defaultVariance } from "../simulate";
+import Configure from "./configure";
+import Validate from "./validate";
 import StartGame from "./start";
 import QuestionsGame, { Question } from "./questions";
 import Results from "./results";
 
 enum GameState {
+  Configure,
+  Validate,
   Start,
   Playing,
   Finished,
@@ -20,48 +22,39 @@ export default function Play() {
   const SENSITIVITY = 1;
   const STARTING_EPSILON_POWER_OF_TEN = 0;
 
-  const [gameState, setGameState] = useState<GameState>(GameState.Start);
+  const [gameState, setGameState] = useState<GameState>(GameState.Configure);
   const [conversionRate, setConversionRate] = useState<number>(0.01);
   const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
-  const [variance, setVariance] = useState<number>(0.00001);
+  const [variance, setVariance] = useState<number>(
+    defaultVariance(conversionRate),
+  );
   const [currentEpsilon, setCurrentEpsilon] = useState<ExponentialNumber>(
     new ExponentialNumber(STARTING_EPSILON_POWER_OF_TEN, 10),
   );
-
   const [answeredQuestions, setAnsweredQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    setVariance(defaultVariance(conversionRate));
+  }, [conversionRate]);
 
   const nextEpsilon = new ExponentialNumber(
     currentEpsilon.exponent - 1,
     currentEpsilon.base,
   );
 
-  useEffect(() => {
-    const savedConversionRate = parseFloat(
-      sessionStorage.getItem("conversionRate") || "0.01",
-    );
-
-    const savedCampaignSizeExp = parseInt(
-      sessionStorage.getItem("campaignSizeExp") || "6",
-    );
-    const savedVariance = parseFloat(
-      sessionStorage.getItem("conversionRateVariance") || "",
-    );
-
-    setConversionRate(savedConversionRate);
-    setCampaignSizeExp(savedCampaignSizeExp);
-    setVariance(savedVariance);
-  }, []);
-
-  // redirect in case where values aren't saved (perhaps by directly navigating)
-  if (Number.isNaN(conversionRate) || Number.isNaN(campaignSizeExp)) {
-    redirect("/game/configure");
-  } else if (Number.isNaN(variance)) {
-    redirect("/game/validate");
-  }
-
   const impressions: number = Math.pow(10, campaignSizeExp);
-  const totalConversions: number = impressions * conversionRate;
-  const conversionsPerThousand: number = 1000 * conversionRate;
+
+  const setGameStateConfigure = () => {
+    setGameState(GameState.Configure);
+  };
+
+  const setGameStateValidate = () => {
+    setGameState(GameState.Validate);
+  };
+
+  const setGameStateStart = () => {
+    setGameState(GameState.Start);
+  };
 
   const setGameStatePlaying = () => {
     setGameState(GameState.Playing);
@@ -71,11 +64,6 @@ export default function Play() {
     setGameState(GameState.Finished);
   };
 
-  const handleNextRound = () => {
-    setCurrentEpsilon(nextEpsilon);
-    setGameState(GameState.Playing);
-  };
-
   return (
     <div className="mx-auto max-w-7xl px-2 lg:px-6 py-32 sm:py-40 lg:px-8">
       <section className="">
@@ -83,25 +71,40 @@ export default function Play() {
           <div className="max-w-full px-2 lg:px-6 py-6 bg-white/60 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             {(() => {
               switch (gameState) {
+                case GameState.Configure:
+                  return (
+                    <Configure
+                      conversionRate={conversionRate}
+                      setConversionRate={setConversionRate}
+                      campaignSizeExp={campaignSizeExp}
+                      setCampaignSizeExp={setCampaignSizeExp}
+                      setGameStateValidate={setGameStateValidate}
+                    />
+                  );
+                case GameState.Validate:
+                  return (
+                    <Validate
+                      conversionRate={conversionRate}
+                      campaignSizeExp={campaignSizeExp}
+                      variance={variance}
+                      setVariance={setVariance}
+                      setGameStateConfigure={setGameStateConfigure}
+                      setGameStateStart={setGameStateStart}
+                    />
+                  );
+
                 case GameState.Start:
                   return (
                     <StartGame
                       impressions={impressions}
-                      totalConversions={totalConversions}
-                      conversionsPerThousand={conversionsPerThousand}
-                      clickStart={setGameStatePlaying}
+                      conversionRate={conversionRate}
+                      setGameStatePlaying={setGameStatePlaying}
+                      setGameStateValidate={setGameStateValidate}
                     />
                   );
                 case GameState.Playing:
                   return (
                     <>
-                      <CampaignStats
-                        impressions={impressions}
-                        totalConversions={totalConversions}
-                        conversionsPerThousand={conversionsPerThousand}
-                        className=""
-                      />
-
                       <QuestionsGame
                         setAnsweredQuestions={setAnsweredQuestions}
                         impressions={impressions}
@@ -121,7 +124,9 @@ export default function Play() {
                       num_questions={NUM_QUESTIONS}
                       currentEpsilon={currentEpsilon}
                       nextEpsilon={nextEpsilon}
-                      handleNextRound={handleNextRound}
+                      setCurrentEpsilon={setCurrentEpsilon}
+                      setGameStatePlaying={setGameStatePlaying}
+                      setGameStateConfigure={setGameStateConfigure}
                     />
                   );
               }

@@ -3,55 +3,37 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  defaultVariance,
   simulatedPercentiles,
   increaseVariance,
   decreaseVariance,
 } from "../simulate";
-import { redirect } from "next/navigation";
-import Link from "next/link";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import AdjustVariance from "../validate/adjustVariance";
+import AdjustVariance from "./adjustVariance";
 
-export default function Validate() {
-  const [isContinueClicked, setIsContinueClicked] = useState(false);
+export default function Validate({
+  conversionRate,
+  campaignSizeExp,
+  variance,
+  setVariance,
+  setGameStateConfigure,
+  setGameStateStart,
+}: {
+  conversionRate: number;
+  campaignSizeExp: number;
+  variance: number;
+  setVariance: (value: number) => void;
+  setGameStateConfigure: () => void;
+  setGameStateStart: () => void;
+}) {
   const [isLoading, setIsLoading] = useState(true);
   const [percentiles, setPercentiles] = useState<number[]>([]);
   const [loadingPercent, setLoadingPercent] = useState(0);
-  const [conversionRate, setConversionRate] = useState<number>(0.01);
-  const [campaignSizeExp, setCampaignSizeExp] = useState<number>(6);
-  const [variance, setVariance] = useState<number>(10);
-
-  useEffect(() => {
-    const savedConversionRate = parseFloat(
-      sessionStorage.getItem("conversionRate") || "0.01",
-    );
-
-    const savedCampaignSizeExp = parseInt(
-      sessionStorage.getItem("campaignSizeExp") || "6",
-    );
-    const savedVariance = parseFloat(
-      sessionStorage.getItem("conversionRateVariance") || "",
-    );
-
-    const savedOrDefaultVariance: number = !isNaN(savedVariance)
-      ? savedVariance
-      : defaultVariance(conversionRate);
-
-    setConversionRate(savedConversionRate);
-    setCampaignSizeExp(savedCampaignSizeExp);
-    setVariance(savedOrDefaultVariance);
-  }, []);
 
   const impressions: number = Math.pow(10, campaignSizeExp);
-
-  if (isNaN(conversionRate) || isNaN(impressions)) {
-    redirect("/game/configure");
-  }
 
   useEffect(() => {
     const getPercentiles = async () => {
@@ -78,20 +60,14 @@ export default function Validate() {
     getPercentiles();
   }, [variance]);
 
-  const handleContinueButtonClick = () => {
-    setIsContinueClicked(!isContinueClicked);
-  };
-
   const handleDecreaseButtonClick = () => {
     const new_variance = decreaseVariance(conversionRate, variance);
     setVariance(new_variance);
-    sessionStorage.setItem("conversionRateVariance", new_variance.toString());
   };
 
   const handleIncreaseButtonClick = () => {
     const new_variance = increaseVariance(conversionRate, variance);
     setVariance(new_variance);
-    sessionStorage.setItem("conversionRateVariance", new_variance.toString());
   };
 
   return (
@@ -132,7 +108,8 @@ export default function Validate() {
                 <hr className="h-px mt-4 mb-4 bg-gray-200 border-0" />
 
                 <Navigation
-                  handleContinueButtonClick={handleContinueButtonClick}
+                  setGameStateConfigure={setGameStateConfigure}
+                  setGameStateStart={setGameStateStart}
                   className="pt-6 space-x-4"
                 />
               </>
@@ -257,29 +234,30 @@ function Percentiles({
 }
 
 function Navigation({
-  handleContinueButtonClick,
+  setGameStateConfigure,
+  setGameStateStart,
   className,
 }: {
-  handleContinueButtonClick: () => void;
+  setGameStateConfigure: () => void;
+  setGameStateStart: () => void;
   className: string;
 }) {
   return (
     <div className={className}>
       <div className="flex justify-between items-center">
-        <Link href="/game/configure">
-          <button className="h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between">
-            <ArrowLeftCircleIcon className="h-8 w-auto" />
-            Back
-          </button>
-        </Link>
-        <Link href="/game/play">
-          <button
-            className="h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
-            onClick={handleContinueButtonClick}
-          >
-            Continue <ArrowRightCircleIcon className="h-8 w-auto" />
-          </button>
-        </Link>
+        <button
+          className="h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          onClick={setGameStateConfigure}
+        >
+          <ArrowLeftCircleIcon className="h-8 w-auto" />
+          Back
+        </button>
+        <button
+          className="h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          onClick={setGameStateStart}
+        >
+          Continue <ArrowRightCircleIcon className="h-8 w-auto" />
+        </button>
       </div>
     </div>
   );

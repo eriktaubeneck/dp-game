@@ -5,8 +5,6 @@ import {
   ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import Link from "next/link";
-
 import { Question } from "./questions";
 import { ExponentialNumber } from "../../exponentialNumber";
 
@@ -15,19 +13,28 @@ export default function Results({
   num_questions,
   currentEpsilon,
   nextEpsilon,
-  handleNextRound,
+  setCurrentEpsilon,
+  setGameStatePlaying,
+  setGameStateConfigure,
 }: {
   answeredQuestions: Question[];
   num_questions: number;
   currentEpsilon: ExponentialNumber;
   nextEpsilon: ExponentialNumber;
-  handleNextRound: any;
+  setCurrentEpsilon: (value: ExponentialNumber) => void;
+  setGameStatePlaying: () => void;
+  setGameStateConfigure: () => void;
 }) {
   const numCorrect = answeredQuestions.reduce(
     (count, question) =>
       question.actualResult === question.noisedResult ? count + 1 : count,
     0,
   );
+
+  const handleNextRound = () => {
+    setCurrentEpsilon(nextEpsilon);
+    setGameStatePlaying();
+  };
 
   return (
     <>
@@ -112,11 +119,12 @@ export default function Results({
           </table>
         </div>
         <div className="flex justify-between items-center mt-10 space-x-4">
-          <Link href="/game/configure">
-            <button className="bg-emerald-400 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded justify-center text-center">
-              Start Over
-            </button>
-          </Link>
+          <button
+            className="bg-emerald-400 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
+            onClick={setGameStateConfigure}
+          >
+            Start Over
+          </button>
           <button
             className="bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded justify-center text-center"
             onClick={handleNextRound}

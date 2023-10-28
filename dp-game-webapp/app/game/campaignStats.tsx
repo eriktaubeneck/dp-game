@@ -2,17 +2,18 @@ import React from "react";
 
 interface CampaignStatsProps {
   impressions: number;
-  totalConversions: number;
-  conversionsPerThousand: number;
+  conversionRate: number;
   className: string;
 }
 
 export function CampaignStats({
   impressions,
-  totalConversions,
-  conversionsPerThousand,
+  conversionRate,
   className,
 }: CampaignStatsProps) {
+  const totalConversions: number = impressions * conversionRate;
+  const conversionsPerThousand: number = 1000 * conversionRate;
+
   return (
     <div className={className}>
       <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">

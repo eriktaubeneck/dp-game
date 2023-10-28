@@ -8,6 +8,7 @@ import {
 
 import { generateSimulatedConversions, laplaceNoise } from "../simulate";
 import { ExponentialNumber } from "../../exponentialNumber";
+import { CampaignStats } from "../campaignStats";
 
 export enum Answer {
   IncreaseSpend,
@@ -145,6 +146,12 @@ export default function QuestionsGame({
 
   return (
     <>
+      <CampaignStats
+        impressions={impressions}
+        conversionRate={conversionRate}
+        className=""
+      />
+
       <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
         For each of these results, would you increase or decrease spend?
       </div>
