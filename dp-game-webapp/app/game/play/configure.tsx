@@ -48,7 +48,7 @@ export default function Configure({
             </div>
             <div className="mt-6 flex-col items-center justify-between">
               <ConversionRateSlider
-                value={conversionRate}
+                conversionRate={conversionRate}
                 onChange={handleConversionRateChange}
               />
             </div>

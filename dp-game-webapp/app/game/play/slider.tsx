@@ -30,23 +30,23 @@ export function CampaignSizeSlider({
   );
 }
 
-export function ConversionRateSlider({ value, onChange }) {
-  const sliderValue = value * 1000;
+export function ConversionRateSlider({ conversionRate, onChange }) {
+  const sliderValue = (conversionRate * 10000) / 5;
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
-    let conversionRate = (1 / 1000) * val;
+    let conversionRate = (5 / 10000) * val;
     onChange(conversionRate);
   };
 
-  const displayValue = ((1 / 10) * sliderValue).toFixed(1);
+  const displayValue = ((5 / 100) * sliderValue).toFixed(2);
   return (
     <>
       <p>Average Conversion Rate: {displayValue}%</p>
       <input
         type="range"
         min="1"
-        max="999"
+        max="1999"
         value={sliderValue}
         onChange={handleSliderChange}
         className="w-full"
