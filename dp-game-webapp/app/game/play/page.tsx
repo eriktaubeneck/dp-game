@@ -65,76 +65,64 @@ export default function Play() {
     setGameState(GameState.Finished);
   };
 
-  return (
-    <div className="mx-auto max-w-7xl px-2 lg:px-6 py-32 sm:py-40 lg:px-8">
-      <section className="">
-        <div className="sm:mx-auto sm:w-full sm:max-w-[510px]">
-          <div className="max-w-full px-2 lg:px-6 py-6 bg-white/60 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            {(() => {
-              switch (gameState) {
-                case GameState.Configure:
-                  return (
-                    <Configure
-                      conversionRate={conversionRate}
-                      setConversionRate={setConversionRate}
-                      campaignSize={campaignSize}
-                      setCampaignSize={setCampaignSize}
-                      setGameStateValidate={setGameStateValidate}
-                    />
-                  );
-                case GameState.Validate:
-                  return (
-                    <Validate
-                      conversionRate={conversionRate}
-                      variance={variance}
-                      setVariance={setVariance}
-                      campaignSize={campaignSize}
-                      setGameStateConfigure={setGameStateConfigure}
-                      setGameStateStart={setGameStateStart}
-                    />
-                  );
+  switch (gameState) {
+    case GameState.Configure:
+      return (
+        <Configure
+          conversionRate={conversionRate}
+          setConversionRate={setConversionRate}
+          campaignSize={campaignSize}
+          setCampaignSize={setCampaignSize}
+          setGameStateValidate={setGameStateValidate}
+        />
+      );
+    case GameState.Validate:
+      return (
+        <Validate
+          conversionRate={conversionRate}
+          variance={variance}
+          setVariance={setVariance}
+          campaignSize={campaignSize}
+          setGameStateConfigure={setGameStateConfigure}
+          setGameStateStart={setGameStateStart}
+        />
+      );
 
-                case GameState.Start:
-                  return (
-                    <StartGame
-                      impressions={campaignSize.value}
-                      conversionRate={conversionRate}
-                      setGameStatePlaying={setGameStatePlaying}
-                      setGameStateValidate={setGameStateValidate}
-                    />
-                  );
-                case GameState.Playing:
-                  return (
-                    <>
-                      <QuestionsGame
-                        setAnsweredQuestions={setAnsweredQuestions}
-                        impressions={campaignSize.value}
-                        conversionRate={conversionRate}
-                        variance={variance}
-                        sensitivity={SENSITIVITY}
-                        num_questions={NUM_QUESTIONS}
-                        currentEpsilon={currentEpsilon}
-                        setGameStateFinished={setGameStateFinished}
-                      />
-                    </>
-                  );
-                case GameState.Finished:
-                  return (
-                    <Results
-                      answeredQuestions={answeredQuestions}
-                      num_questions={NUM_QUESTIONS}
-                      currentEpsilon={currentEpsilon}
-                      nextEpsilon={nextEpsilon}
-                      setCurrentEpsilon={setCurrentEpsilon}
-                      setGameStatePlaying={setGameStatePlaying}
-                      setGameStateConfigure={setGameStateConfigure}
-                    />
-                  );
-              }
-            })()}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+    case GameState.Start:
+      return (
+        <StartGame
+          impressions={campaignSize.value}
+          conversionRate={conversionRate}
+          setGameStatePlaying={setGameStatePlaying}
+          setGameStateValidate={setGameStateValidate}
+        />
+      );
+    case GameState.Playing:
+      return (
+        <>
+          <QuestionsGame
+            setAnsweredQuestions={setAnsweredQuestions}
+            impressions={campaignSize.value}
+            conversionRate={conversionRate}
+            variance={variance}
+            sensitivity={SENSITIVITY}
+            num_questions={NUM_QUESTIONS}
+            currentEpsilon={currentEpsilon}
+            setGameStateFinished={setGameStateFinished}
+          />
+        </>
+      );
+    case GameState.Finished:
+      return (
+        <Results
+          answeredQuestions={answeredQuestions}
+          num_questions={NUM_QUESTIONS}
+          currentEpsilon={currentEpsilon}
+          nextEpsilon={nextEpsilon}
+          setCurrentEpsilon={setCurrentEpsilon}
+          setGameStatePlaying={setGameStatePlaying}
+          setGameStateConfigure={setGameStateConfigure}
+        />
+      );
+  }
 }

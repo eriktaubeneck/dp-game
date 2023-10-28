@@ -7,6 +7,7 @@ import {
 
 import { Question } from "./questions";
 import { ExponentialNumber } from "../../exponentialNumber";
+import { GameContainer, PageContainer, PageTitle } from "./components";
 
 export default function Results({
   answeredQuestions,
@@ -37,11 +38,9 @@ export default function Results({
   };
 
   return (
-    <>
-      <div className="justify-center text-center py-3">
-        <div className="text-xl font-semibold leading-6 text-blue-600">
-          Finished!
-        </div>
+    <PageContainer>
+      <PageTitle>Finished!</PageTitle>
+      <GameContainer>
         <div className="text-l font-medium leading-6 text-gray-900 dark:text-white">
           Accuracy of results vs noise added ({"\u03B5"}=
           {currentEpsilon.toString()})
@@ -51,7 +50,7 @@ export default function Results({
         </div>
         <h2>Results Table</h2>
         <div className="flex justify-center">
-          <table className="min-w-fit divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th
@@ -91,22 +90,22 @@ export default function Results({
                       : "bg-rose-50 hover:bg-rose-200"
                   }
                 >
-                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
                     {item.conversions.toLocaleString()}
                   </td>
-                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
                     {item.actualResult ? (
                       <ArrowDownCircleIcon className="h-8 w-auto" />
                     ) : (
                       <ArrowUpCircleIcon className="h-8 w-auto" />
                     )}
                   </td>
-                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
                     {(
                       Math.round(item.noise) + item.conversions
                     ).toLocaleString()}
                   </td>
-                  <td className="px-1 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
                     {item.noisedResult ? (
                       <ArrowDownCircleIcon className="h-8 w-auto" />
                     ) : (
@@ -132,7 +131,7 @@ export default function Results({
             Continue to Next Level ({"\u03B5"}={nextEpsilon.toString()})
           </button>
         </div>
-      </div>
-    </>
+      </GameContainer>
+    </PageContainer>
   );
 }
