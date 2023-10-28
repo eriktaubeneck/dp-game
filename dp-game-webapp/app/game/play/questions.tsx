@@ -128,7 +128,9 @@ export default function QuestionsGame({
     }
   };
 
-  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
+  const getQuestionAnswer = (
+    questionIndex: QuestionIndex,
+  ): Answer | undefined => {
     const question: Question = questions[questionIndex.index];
     if (questionIndex.noised) {
       return question.noisedResult;
@@ -137,13 +139,24 @@ export default function QuestionsGame({
     }
   };
 
-  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.DecreaseSpend, questionIndex);
-  };
-
-  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.IncreaseSpend, questionIndex);
-  };
+  function AnswerRow(value: QuestionIndex, index: number) {
+    const answer = getQuestionAnswer(value);
+    const conversions = getQuestionConversions(value);
+    return (
+      <tr key={index}>
+        <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
+          {conversions.toLocaleString()}
+        </td>
+        <td className="flex items-center justify-around mt-2 mb-2 text-gray-900">
+          <AnswerButtons
+            questionIndex={value}
+            answer={answer}
+            handleAnswer={handleAnswer}
+          />
+        </td>
+      </tr>
+    );
+  }
 
   return (
     <PageContainer>
@@ -176,43 +189,7 @@ export default function QuestionsGame({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {questionOrder.map((questionIndex, index) => {
-              const answer = getQuestionAnswer(questionIndex);
-              const conversions = getQuestionConversions(questionIndex);
-              return (
-                <tr key={index}>
-                  <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
-                    {conversions.toLocaleString()}
-                  </td>
-                  <td className="flex items-center justify-around mt-2 mb-2 text-gray-900">
-                    <div className="flex justify-between space-x-1 lg:space-x-4">
-                      <button
-                        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
-                          answer === Answer.DecreaseSpend
-                            ? "bg-cyan-700"
-                            : "bg-cyan-400"
-                        }`}
-                        onClick={() => handleDecreaseSpend(questionIndex)}
-                      >
-                        Decrease{" "}
-                        <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
-                      </button>
-                      <button
-                        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
-                          answer === Answer.IncreaseSpend
-                            ? "bg-emerald-700"
-                            : "bg-emerald-400"
-                        }`}
-                        onClick={() => handleIncreaseSpend(questionIndex)}
-                      >
-                        Increase{" "}
-                        <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {questionOrder.map(AnswerRow)}
           </tbody>
         </table>
         <div className="flex justify-end items-center">
@@ -228,5 +205,44 @@ export default function QuestionsGame({
         </div>
       </GameContainer>
     </PageContainer>
+  );
+}
+
+function AnswerButtons({
+  questionIndex,
+  answer,
+  handleAnswer,
+}: {
+  questionIndex: QuestionIndex;
+  answer: Answer | undefined;
+  handleAnswer: (answer: Answer, questionIndex: QuestionIndex) => void;
+}) {
+  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.DecreaseSpend, questionIndex);
+  };
+
+  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
+    handleAnswer(Answer.IncreaseSpend, questionIndex);
+  };
+
+  return (
+    <div className="flex justify-between space-x-1 lg:space-x-4">
+      <button
+        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.DecreaseSpend ? "bg-cyan-700" : "bg-cyan-400"
+        }`}
+        onClick={() => handleDecreaseSpend(questionIndex)}
+      >
+        Decrease <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+      </button>
+      <button
+        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"
+        }`}
+        onClick={() => handleIncreaseSpend(questionIndex)}
+      >
+        Increase <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+      </button>
+    </div>
   );
 }
