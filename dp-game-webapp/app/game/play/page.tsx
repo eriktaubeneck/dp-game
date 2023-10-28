@@ -18,7 +18,7 @@ enum GameState {
 }
 
 export default function Play() {
-  const NUM_QUESTIONS = 1;
+  const NUM_QUESTIONS = 10;
   const SENSITIVITY = 1;
   const STARTING_EPSILON_POWER_OF_TEN = 0;
   const STARTING_CAMPAIGN_SIZE_POWER_OF_TEN = 6;
