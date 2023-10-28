@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { ExponentialNumber } from "../../exponentialNumber";
 
@@ -30,7 +29,13 @@ export function CampaignSizeSlider({
   );
 }
 
-export function ConversionRateSlider({ conversionRate, onChange }) {
+export function ConversionRateSlider({
+  conversionRate,
+  onChange,
+}: {
+  conversionRate: number;
+  onChange: (value: number) => void;
+}) {
   const sliderValue = (conversionRate * 10000) / 5;
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
