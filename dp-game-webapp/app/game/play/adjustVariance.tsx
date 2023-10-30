@@ -1,5 +1,4 @@
-// @ts-nocheck
-
+import React from "react";
 import {
   ArrowUpCircleIcon,
   ArrowDownCircleIcon,
@@ -9,6 +8,10 @@ export default function adjustVariance({
   handleIncreaseButtonClick,
   handleDecreaseButtonClick,
   className,
+}: {
+  handleIncreaseButtonClick: () => void;
+  handleDecreaseButtonClick: () => void;
+  className: string;
 }) {
   return (
     <div className={className}>

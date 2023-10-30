@@ -67,7 +67,8 @@ export function defaultVariance(mean: number): number {
 
   const alphaFit = 1.2695280130777336;
   const betaFit = 26.876825491735;
-  const variance = betaDistributionVariance(alphaFit, betaFit);
+  const fitVariance = betaDistributionVariance(alphaFit, betaFit);
+  const variance = Math.min(mean * (1 - mean) * 0.999, fitVariance);
   const [alpha, beta] = betaAlphaBeta(mean, variance);
   const x = Math.max(2, Math.min(alpha, beta));
   const k = alpha < beta ? x / alpha : x / beta;

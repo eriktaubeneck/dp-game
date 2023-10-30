@@ -21,7 +21,7 @@ export default function Example() {
       </div>
       <div className="flex flex-1 justify-center">
         <Link
-          href="/game"
+          href="/game/play"
           className="text-2xl font-semibold leading-6 text-blue-600"
         >
           Let's Play! <span aria-hidden="true">&rarr;</span>
