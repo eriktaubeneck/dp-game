@@ -23,7 +23,7 @@ export enum Answer {
 export interface Question {
   conversions: number;
   noise: number;
-  actualResult?: Answer;
+  unnoisedResult?: Answer;
   noisedResult?: Answer;
 }
 
@@ -108,10 +108,10 @@ export default function QuestionsGame({
     const updatedQuestion: Question = {
       conversions: question.conversions,
       noise: question.noise,
-      actualResult:
+      unnoisedResult:
         questionPageState === QuestionPageState.Unnoised
           ? answer
-          : question.actualResult,
+          : question.unnoisedResult,
       noisedResult:
         questionPageState === QuestionPageState.Noised
           ? answer
@@ -132,7 +132,7 @@ export default function QuestionsGame({
   };
 
   const allUnnoisedAnswered: boolean = !questions.some(
-    (question: Question) => question.actualResult === undefined,
+    (question: Question) => question.unnoisedResult === undefined,
   );
   const allNoisedAnswered: boolean = !questions.some(
     (question: Question) => question.noisedResult === undefined,
@@ -151,7 +151,7 @@ export default function QuestionsGame({
     console.log(questions);
     const question: Question = questions[questionIndex];
     if (questionPageState == QuestionPageState.Unnoised) {
-      return question.actualResult;
+      return question.unnoisedResult;
     } else {
       return question.noisedResult;
     }
