@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import React, { ReactNode } from "react";
 
 export function PageContainer({ children }: { children: ReactNode }) {
@@ -31,5 +32,40 @@ export function GameContainer({ children }: { children: ReactNode }) {
         {children}
       </div>
     </div>
+  );
+}
+
+/**
+ * Making this abstact in case we want to use ToolTip with a button or other icon in the future.
+ */
+function Tooltip({
+  children,
+  tooltipChildren,
+}: {
+  children: ReactNode;
+  tooltipChildren: ReactNode;
+}) {
+  return (
+    <div className="relative group">
+      <div className="absolute h-auto bottom-full py-2 w-auto text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg shadow-sm transition-opacity hover:ease-in group-hover:opacity-100 opacity-0 ease-out duration-150 dark:bg-gray-700 dark:text-white">
+        {tooltipChildren}
+      </div>
+      <div className="group">{children}</div>
+    </div>
+  );
+}
+
+export function InfoCircleToolTip({
+  className,
+  tooltipChildren,
+}: {
+  className: string;
+  tooltipChildren: ReactNode;
+}) {
+  return (
+    <Tooltip
+      children={<InformationCircleIcon className={className} />}
+      tooltipChildren={tooltipChildren}
+    />
   );
 }

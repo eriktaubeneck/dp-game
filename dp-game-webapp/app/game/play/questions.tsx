@@ -13,7 +13,7 @@ import {
 } from "../simulate";
 import { ExponentialNumber } from "../../exponentialNumber";
 import { CampaignStats } from "../campaignStats";
-import { GameContainer, PageContainer } from "./components";
+import { GameContainer, InfoCircleToolTip, PageContainer } from "./components";
 
 export enum Answer {
   IncreaseSpend,
@@ -171,12 +171,12 @@ export default function QuestionsGame({
               {Math.round(
                 conversions +
                   laplacePPF(0.025, sensitivity, currentEpsilon.value),
-              ).toFixed()}
-              ,{" "}
+              ).toLocaleString()}{" "}
+              -{" "}
               {Math.round(
                 conversions +
                   laplacePPF(0.975, sensitivity, currentEpsilon.value),
-              ).toFixed()}
+              ).toLocaleString()}
               )
             </span>
           )}
@@ -234,11 +234,20 @@ export default function QuestionsGame({
                 {questionPageState === QuestionPageState.Unnoised ? (
                   <span>Conversions</span>
                 ) : (
-                  <span>
-                    Conversions <br />
-                    <div className="font-light normal-case">
-                      w/ 95% Confidence Interval on Observed Value
-                    </div>
+                  <span className="flex items-center">
+                    <span className="mr-2">Conversions</span>
+                    <InfoCircleToolTip
+                      className="h-5 w-auto -mt-1 -mx-1"
+                      tooltipChildren={
+                        <div className="font-light normal-case">
+                          The true observed falls within the provided range 95%
+                          of the time.
+                          <br />
+                          <b>Note:</b> This is not a confidence interval on the
+                          true conversion rate.
+                        </div>
+                      }
+                    />
                   </span>
                 )}
               </th>
