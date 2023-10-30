@@ -148,7 +148,6 @@ export default function QuestionsGame({
   };
 
   const getQuestionAnswer = (questionIndex: number): Answer | undefined => {
-    console.log(questions);
     const question: Question = questions[questionIndex];
     if (questionPageState == QuestionPageState.Unnoised) {
       return question.unnoisedResult;
