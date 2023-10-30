@@ -1,13 +1,27 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 import {
   ArrowUpCircleIcon,
   ArrowDownCircleIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import { Question } from "./questions";
+import { Answer, AnsweredQuestion } from "./questions";
 import { ExponentialNumber } from "../../exponentialNumber";
 import { GameContainer, PageContainer, PageTitle } from "./components";
+
+const answerIcons: Record<Answer, ReactNode> = {
+  [Answer.DecreaseSpend]: (
+    <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+  ),
+  [Answer.MaintainSpend]: (
+    <MinusCircleIcon className="h-4 lg:h-8 w-autho ml-2" />
+  ),
+
+  [Answer.IncreaseSpend]: (
+    <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+  ),
+};
 
 export default function Results({
   answeredQuestions,
@@ -18,7 +32,7 @@ export default function Results({
   setGameStatePlaying,
   setGameStateConfigure,
 }: {
-  answeredQuestions: Question[];
+  answeredQuestions: AnsweredQuestion[];
   num_questions: number;
   currentEpsilon: ExponentialNumber;
   nextEpsilon: ExponentialNumber;
@@ -28,7 +42,7 @@ export default function Results({
 }) {
   const numCorrect = answeredQuestions.reduce(
     (count, question) =>
-      question.unnoisedResult === question.noisedResult ? count + 1 : count,
+      question.unnoisedAnswer === question.noisedAnswer ? count + 1 : count,
     0,
   );
 
@@ -85,7 +99,7 @@ export default function Results({
                 <tr
                   key={index}
                   className={
-                    item.unnoisedResult == item.noisedResult
+                    item.unnoisedAnswer == item.noisedAnswer
                       ? "bg-emerald-50 hover:bg-emerald-200"
                       : "bg-rose-50 hover:bg-rose-200"
                   }
@@ -94,11 +108,7 @@ export default function Results({
                     {item.conversions.toLocaleString()}
                   </td>
                   <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
-                    {item.unnoisedResult ? (
-                      <ArrowDownCircleIcon className="h-8 w-auto" />
-                    ) : (
-                      <ArrowUpCircleIcon className="h-8 w-auto" />
-                    )}
+                    {answerIcons[item.unnoisedAnswer]}
                   </td>
                   <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
                     {(
@@ -106,11 +116,7 @@ export default function Results({
                     ).toLocaleString()}
                   </td>
                   <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
-                    {item.noisedResult ? (
-                      <ArrowDownCircleIcon className="h-8 w-auto" />
-                    ) : (
-                      <ArrowUpCircleIcon className="h-8 w-auto" />
-                    )}
+                    {answerIcons[item.noisedAnswer]}
                   </td>
                 </tr>
               ))}

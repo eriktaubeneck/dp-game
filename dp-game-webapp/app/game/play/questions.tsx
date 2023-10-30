@@ -4,6 +4,7 @@ import {
   ArrowRightCircleIcon,
   ArrowUpCircleIcon,
   ArrowDownCircleIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import {
@@ -17,14 +18,22 @@ import { GameContainer, InfoCircleToolTip, PageContainer } from "./components";
 
 export enum Answer {
   IncreaseSpend,
+  MaintainSpend,
   DecreaseSpend,
 }
 
 export interface Question {
   conversions: number;
   noise: number;
-  unnoisedResult?: Answer;
-  noisedResult?: Answer;
+  unnoisedAnswer?: Answer;
+  noisedAnswer?: Answer;
+}
+
+export interface AnsweredQuestion {
+  conversions: number;
+  noise: number;
+  unnoisedAnswer: Answer;
+  noisedAnswer: Answer;
 }
 
 export interface QuestionIndex {
@@ -56,7 +65,7 @@ export default function QuestionsGame({
   currentEpsilon,
   setGameStateFinished,
 }: {
-  setAnsweredQuestions: (value: Question[]) => void;
+  setAnsweredQuestions: (value: AnsweredQuestion[]) => void;
   impressions: number;
   conversionRate: number;
   variance: number;
@@ -108,14 +117,14 @@ export default function QuestionsGame({
     const updatedQuestion: Question = {
       conversions: question.conversions,
       noise: question.noise,
-      unnoisedResult:
+      unnoisedAnswer:
         questionPageState === QuestionPageState.Unnoised
           ? answer
-          : question.unnoisedResult,
-      noisedResult:
+          : question.unnoisedAnswer,
+      noisedAnswer:
         questionPageState === QuestionPageState.Noised
           ? answer
-          : question.noisedResult,
+          : question.noisedAnswer,
     };
 
     questionsCopy[questionIndex] = updatedQuestion;
@@ -127,15 +136,29 @@ export default function QuestionsGame({
   };
 
   const handleSubmit = () => {
-    setAnsweredQuestions(questions);
+    const answeredQuestions: AnsweredQuestion[] = questions.map((question) => {
+      if (
+        question.unnoisedAnswer === undefined ||
+        question.noisedAnswer === undefined
+      ) {
+        throw new Error("Unexpected unanswered question");
+      }
+      return {
+        conversions: question.conversions,
+        noise: question.noise,
+        unnoisedAnswer: question.unnoisedAnswer,
+        noisedAnswer: question.noisedAnswer,
+      };
+    });
+    setAnsweredQuestions(answeredQuestions);
     setGameStateFinished();
   };
 
   const allUnnoisedAnswered: boolean = !questions.some(
-    (question: Question) => question.unnoisedResult === undefined,
+    (question: Question) => question.unnoisedAnswer === undefined,
   );
   const allNoisedAnswered: boolean = !questions.some(
-    (question: Question) => question.noisedResult === undefined,
+    (question: Question) => question.noisedAnswer === undefined,
   );
 
   const getQuestionConversions = (questionIndex: number) => {
@@ -150,9 +173,9 @@ export default function QuestionsGame({
   const getQuestionAnswer = (questionIndex: number): Answer | undefined => {
     const question: Question = questions[questionIndex];
     if (questionPageState == QuestionPageState.Unnoised) {
-      return question.unnoisedResult;
+      return question.unnoisedAnswer;
     } else {
-      return question.noisedResult;
+      return question.noisedAnswer;
     }
   };
 
@@ -307,6 +330,10 @@ function AnswerButtons({
     handleAnswer(Answer.DecreaseSpend, questionIndex);
   };
 
+  const handleMaintainSpend = (questionIndex: number) => {
+    handleAnswer(Answer.MaintainSpend, questionIndex);
+  };
+
   const handleIncreaseSpend = (questionIndex: number) => {
     handleAnswer(Answer.IncreaseSpend, questionIndex);
   };
@@ -321,6 +348,16 @@ function AnswerButtons({
       >
         Decrease <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
       </button>
+
+      <button
+        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-teal-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.MaintainSpend ? "bg-teal-700" : "bg-teal-400"
+        }`}
+        onClick={() => handleMaintainSpend(questionIndex)}
+      >
+        Maintain <MinusCircleIcon className="h-4 lg:h-8 w-autho ml-2" />
+      </button>
+
       <button
         className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
           answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"

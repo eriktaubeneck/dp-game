@@ -6,7 +6,7 @@ import { defaultVariance } from "../simulate";
 import Configure from "./configure";
 import Validate from "./validate";
 import StartGame from "./start";
-import QuestionsGame, { Question } from "./questions";
+import QuestionsGame, { AnsweredQuestion } from "./questions";
 import Results from "./results";
 
 enum GameState {
@@ -34,7 +34,9 @@ export default function Play() {
   const [currentEpsilon, setCurrentEpsilon] = useState<ExponentialNumber>(
     new ExponentialNumber(STARTING_EPSILON_POWER_OF_TEN, 10),
   );
-  const [answeredQuestions, setAnsweredQuestions] = useState<Question[]>([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    AnsweredQuestion[]
+  >([]);
 
   useEffect(() => {
     setVariance(defaultVariance(conversionRate));
