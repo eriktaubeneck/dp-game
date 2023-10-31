@@ -156,3 +156,15 @@ export function laplaceNoise(
   const noise: number = laplace_dist(0.0, sensitivity / epsilon);
   return value + noise;
 }
+
+export function laplacePPF(
+  p: number,
+  sensitivity: number,
+  epsilon: number,
+): number {
+  if (p <= 0.5) {
+    return (sensitivity / epsilon) * Math.log(2 * p);
+  } else {
+    return (-sensitivity / epsilon) * Math.log(2 * (1 - p));
+  }
+}

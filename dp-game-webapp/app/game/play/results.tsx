@@ -28,7 +28,7 @@ export default function Results({
 }) {
   const numCorrect = answeredQuestions.reduce(
     (count, question) =>
-      question.actualResult === question.noisedResult ? count + 1 : count,
+      question.unnoisedResult === question.noisedResult ? count + 1 : count,
     0,
   );
 
@@ -85,7 +85,7 @@ export default function Results({
                 <tr
                   key={index}
                   className={
-                    item.actualResult == item.noisedResult
+                    item.unnoisedResult == item.noisedResult
                       ? "bg-emerald-50 hover:bg-emerald-200"
                       : "bg-rose-50 hover:bg-rose-200"
                   }
@@ -94,7 +94,7 @@ export default function Results({
                     {item.conversions.toLocaleString()}
                   </td>
                   <td className="px-1 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-700">
-                    {item.actualResult ? (
+                    {item.unnoisedResult ? (
                       <ArrowDownCircleIcon className="h-8 w-auto" />
                     ) : (
                       <ArrowUpCircleIcon className="h-8 w-auto" />

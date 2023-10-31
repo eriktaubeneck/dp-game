@@ -6,10 +6,14 @@ import {
   ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import { generateSimulatedConversions, laplaceNoise } from "../simulate";
+import {
+  generateSimulatedConversions,
+  laplaceNoise,
+  laplacePPF,
+} from "../simulate";
 import { ExponentialNumber } from "../../exponentialNumber";
 import { CampaignStats } from "../campaignStats";
-import { GameContainer, PageContainer } from "./components";
+import { GameContainer, InfoCircleToolTip, PageContainer } from "./components";
 
 export enum Answer {
   IncreaseSpend,
@@ -19,13 +23,27 @@ export enum Answer {
 export interface Question {
   conversions: number;
   noise: number;
-  actualResult?: Answer;
+  unnoisedResult?: Answer;
   noisedResult?: Answer;
 }
 
 export interface QuestionIndex {
   index: number;
   noised: boolean;
+}
+
+enum QuestionPageState {
+  Unnoised,
+  Noised,
+}
+
+function randomIndexOrder(arraySize: number): number[] {
+  const indexOrder = Array.from({ length: arraySize }, (_, index) => index);
+  for (let i = indexOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexOrder[i], indexOrder[j]] = [indexOrder[j], indexOrder[i]];
+  }
+  return indexOrder;
 }
 
 export default function QuestionsGame({
@@ -47,25 +65,14 @@ export default function QuestionsGame({
   currentEpsilon: ExponentialNumber;
   setGameStateFinished: () => void;
 }) {
+  const [questionPageState, setQuestionPageState] = useState<QuestionPageState>(
+    QuestionPageState.Unnoised,
+  );
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionOrder, setQuestionOrder] = useState<QuestionIndex[]>([]);
-
-  const shuffleQuestionOrder = () => {
-    const questionOrder: QuestionIndex[] = [];
-    for (let i = 0; i < num_questions; i++) {
-      questionOrder.push({ index: i, noised: false });
-      questionOrder.push({ index: i, noised: true });
-    }
-
-    function shuffleArray(arr: QuestionIndex[]) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-    shuffleArray(questionOrder);
-    setQuestionOrder(questionOrder);
-  };
+  const [unnoisedQuestionOrder, setUnnoisedQuestionOrder] = useState<number[]>(
+    [],
+  );
+  const [noisedQuestionOrder, setNoisedQuestionOrder] = useState<number[]>([]);
 
   const reloadQuestions = () => {
     const simulatedConversions: Generator<number> =
@@ -87,25 +94,36 @@ export default function QuestionsGame({
       questions.push(question);
     }
     setQuestions(questions);
-    shuffleQuestionOrder();
+    setUnnoisedQuestionOrder(randomIndexOrder(num_questions));
+    setNoisedQuestionOrder(randomIndexOrder(num_questions));
   };
 
   useEffect(() => {
     reloadQuestions();
   }, [currentEpsilon]);
 
-  const handleAnswer = (answer: Answer, questionIndex: QuestionIndex) => {
+  const handleAnswer = (answer: Answer, questionIndex: number) => {
     const questionsCopy = [...questions];
-    const question: Question = questions[questionIndex.index];
+    const question: Question = questions[questionIndex];
     const updatedQuestion: Question = {
       conversions: question.conversions,
       noise: question.noise,
-      actualResult: questionIndex.noised ? question.actualResult : answer,
-      noisedResult: questionIndex.noised ? answer : question.noisedResult,
+      unnoisedResult:
+        questionPageState === QuestionPageState.Unnoised
+          ? answer
+          : question.unnoisedResult,
+      noisedResult:
+        questionPageState === QuestionPageState.Noised
+          ? answer
+          : question.noisedResult,
     };
 
-    questionsCopy[questionIndex.index] = updatedQuestion;
+    questionsCopy[questionIndex] = updatedQuestion;
     setQuestions(questionsCopy);
+  };
+
+  const handleContinue = () => {
+    setQuestionPageState(QuestionPageState.Noised);
   };
 
   const handleSubmit = () => {
@@ -113,37 +131,66 @@ export default function QuestionsGame({
     setGameStateFinished();
   };
 
-  const allAnswered: boolean = !questions.some(
-    (question: Question) =>
-      question.actualResult === undefined ||
-      question.noisedResult === undefined,
+  const allUnnoisedAnswered: boolean = !questions.some(
+    (question: Question) => question.unnoisedResult === undefined,
+  );
+  const allNoisedAnswered: boolean = !questions.some(
+    (question: Question) => question.noisedResult === undefined,
   );
 
-  const getQuestionConversions = (questionIndex: QuestionIndex) => {
-    const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
-      return question.conversions + Math.round(question.noise);
-    } else {
+  const getQuestionConversions = (questionIndex: number) => {
+    const question: Question = questions[questionIndex];
+    if (questionPageState == QuestionPageState.Unnoised) {
       return question.conversions;
-    }
-  };
-
-  const getQuestionAnswer = (questionIndex: QuestionIndex) => {
-    const question: Question = questions[questionIndex.index];
-    if (questionIndex.noised) {
-      return question.noisedResult;
     } else {
-      return question.actualResult;
+      return question.conversions + Math.round(question.noise);
     }
   };
 
-  const handleDecreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.DecreaseSpend, questionIndex);
+  const getQuestionAnswer = (questionIndex: number): Answer | undefined => {
+    const question: Question = questions[questionIndex];
+    if (questionPageState == QuestionPageState.Unnoised) {
+      return question.unnoisedResult;
+    } else {
+      return question.noisedResult;
+    }
   };
 
-  const handleIncreaseSpend = (questionIndex: QuestionIndex) => {
-    handleAnswer(Answer.IncreaseSpend, questionIndex);
-  };
+  function AnswerRow(value: number, index: number) {
+    const answer = getQuestionAnswer(value);
+    const conversions = getQuestionConversions(value);
+    return (
+      <tr key={index}>
+        <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
+          {questionPageState === QuestionPageState.Unnoised ? (
+            conversions.toLocaleString()
+          ) : (
+            <span>
+              {conversions.toLocaleString()}
+              <br />(
+              {Math.round(
+                conversions +
+                  laplacePPF(0.025, sensitivity, currentEpsilon.value),
+              ).toLocaleString()}{" "}
+              -{" "}
+              {Math.round(
+                conversions +
+                  laplacePPF(0.975, sensitivity, currentEpsilon.value),
+              ).toLocaleString()}
+              )
+            </span>
+          )}
+        </td>
+        <td className="flex items-center justify-around mt-2 mb-2 text-gray-900">
+          <AnswerButtons
+            questionIndex={value}
+            answer={answer}
+            handleAnswer={handleAnswer}
+          />
+        </td>
+      </tr>
+    );
+  }
 
   return (
     <PageContainer>
@@ -153,6 +200,25 @@ export default function QuestionsGame({
           conversionRate={conversionRate}
           className=""
         />
+
+        <div className="-mt-6 mb-6 flex-col items-center justify-between text-gray-600">
+          {questionPageState === QuestionPageState.Unnoised ? (
+            <span>No noised added</span>
+          ) : (
+            <span>
+              Current noise from Laplace(0,{" "}
+              {(1 / currentEpsilon.value).toLocaleString()}).
+              <br />
+              95% of the time, this will range from (
+              {laplacePPF(
+                0.025,
+                sensitivity,
+                currentEpsilon.value,
+              ).toFixed()},{" "}
+              {laplacePPF(0.975, sensitivity, currentEpsilon.value).toFixed()})
+            </span>
+          )}
+        </div>
 
         <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
           For each of these results, would you increase or decrease spend?
@@ -165,7 +231,25 @@ export default function QuestionsGame({
                 scope="col"
                 className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Conversions
+                {questionPageState === QuestionPageState.Unnoised ? (
+                  <span>Conversions</span>
+                ) : (
+                  <span className="flex items-center">
+                    <span className="mr-2">Conversions</span>
+                    <InfoCircleToolTip
+                      className="h-5 w-auto -mt-1 -mx-1"
+                      tooltipChildren={
+                        <div className="font-light normal-case">
+                          The true observed falls within the provided range 95%
+                          of the time.
+                          <br />
+                          <b>Note:</b> This is not a confidence interval on the
+                          true conversion rate.
+                        </div>
+                      }
+                    />
+                  </span>
+                )}
               </th>
               <th
                 scope="col"
@@ -176,57 +260,75 @@ export default function QuestionsGame({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {questionOrder.map((questionIndex, index) => {
-              const answer = getQuestionAnswer(questionIndex);
-              const conversions = getQuestionConversions(questionIndex);
-              return (
-                <tr key={index}>
-                  <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
-                    {conversions.toLocaleString()}
-                  </td>
-                  <td className="flex items-center justify-around mt-2 mb-2 text-gray-900">
-                    <div className="flex justify-between space-x-1 lg:space-x-4">
-                      <button
-                        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
-                          answer === Answer.DecreaseSpend
-                            ? "bg-cyan-700"
-                            : "bg-cyan-400"
-                        }`}
-                        onClick={() => handleDecreaseSpend(questionIndex)}
-                      >
-                        Decrease{" "}
-                        <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
-                      </button>
-                      <button
-                        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
-                          answer === Answer.IncreaseSpend
-                            ? "bg-emerald-700"
-                            : "bg-emerald-400"
-                        }`}
-                        onClick={() => handleIncreaseSpend(questionIndex)}
-                      >
-                        Increase{" "}
-                        <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {questionPageState === QuestionPageState.Unnoised
+              ? unnoisedQuestionOrder.map(AnswerRow)
+              : noisedQuestionOrder.map(AnswerRow)}
           </tbody>
         </table>
         <div className="flex justify-end items-center">
-          <button
-            className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
-              allAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
-            }`}
-            onClick={handleSubmit}
-            disabled={!allAnswered}
-          >
-            Submit <ArrowRightCircleIcon className="h-8 w-auto" />
-          </button>
+          {questionPageState === QuestionPageState.Unnoised ? (
+            <button
+              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+                allUnnoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+              }`}
+              onClick={handleContinue}
+              disabled={!allUnnoisedAnswered}
+            >
+              Continue to Noised Round{" "}
+              <ArrowRightCircleIcon className="h-8 w-auto" />
+            </button>
+          ) : (
+            <button
+              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+                allNoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+              }`}
+              onClick={handleSubmit}
+              disabled={!allNoisedAnswered}
+            >
+              Submit <ArrowRightCircleIcon className="h-8 w-auto" />
+            </button>
+          )}
         </div>
       </GameContainer>
     </PageContainer>
+  );
+}
+
+function AnswerButtons({
+  questionIndex,
+  answer,
+  handleAnswer,
+}: {
+  questionIndex: number;
+  answer: Answer | undefined;
+  handleAnswer: (answer: Answer, questionIndex: number) => void;
+}) {
+  const handleDecreaseSpend = (questionIndex: number) => {
+    handleAnswer(Answer.DecreaseSpend, questionIndex);
+  };
+
+  const handleIncreaseSpend = (questionIndex: number) => {
+    handleAnswer(Answer.IncreaseSpend, questionIndex);
+  };
+
+  return (
+    <div className="flex justify-between space-x-1 lg:space-x-4">
+      <button
+        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.DecreaseSpend ? "bg-cyan-700" : "bg-cyan-400"
+        }`}
+        onClick={() => handleDecreaseSpend(questionIndex)}
+      >
+        Decrease <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+      </button>
+      <button
+        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"
+        }`}
+        onClick={() => handleIncreaseSpend(questionIndex)}
+      >
+        Increase <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+      </button>
+    </div>
   );
 }
