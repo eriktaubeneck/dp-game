@@ -41,13 +41,17 @@ export function GameContainer({ children }: { children: ReactNode }) {
 function Tooltip({
   children,
   tooltipChildren,
+  className,
 }: {
   children: ReactNode;
   tooltipChildren: ReactNode;
+  className: string;
 }) {
   return (
     <div className="relative group">
-      <div className="absolute h-auto bottom-full w-64 md:w-72 py-2 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-lg shadow-sm transition-opacity hover:ease-in group-hover:opacity-100 opacity-0 ease-out duration-150 dark:bg-gray-700 dark:text-white">
+      <div
+        className={`${className} absolute mb-1 h-auto bottom-full py-2 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-lg shadow-sm transition-opacity hover:ease-in group-hover:opacity-100 opacity-0 ease-out duration-150 dark:bg-gray-700 dark:text-white`}
+      >
         {tooltipChildren}
       </div>
       <div className="group">{children}</div>
@@ -55,16 +59,18 @@ function Tooltip({
   );
 }
 
-export function InfoCircleToolTip({
-  className,
-  tooltipChildren,
+export function InfoCircleTooltip({
+  children,
+  tooltipClassName,
+  infoCircleClassName,
 }: {
-  className: string;
-  tooltipChildren: ReactNode;
+  children: ReactNode;
+  tooltipClassName: string;
+  infoCircleClassName: string;
 }) {
   return (
-    <Tooltip tooltipChildren={tooltipChildren}>
-      <InformationCircleIcon className={className} />
+    <Tooltip tooltipChildren={children} className={tooltipClassName}>
+      <InformationCircleIcon className={infoCircleClassName} />
     </Tooltip>
   );
 }

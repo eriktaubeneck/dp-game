@@ -14,7 +14,7 @@ import {
 } from "../simulate";
 import { ExponentialNumber } from "../../exponentialNumber";
 import { CampaignStats } from "../campaignStats";
-import { GameContainer, InfoCircleToolTip, PageContainer } from "./components";
+import { GameContainer, InfoCircleTooltip, PageContainer } from "./components";
 
 export enum Answer {
   IncreaseSpend,
@@ -244,10 +244,11 @@ export default function QuestionsGame({
         </div>
 
         <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
-          For each of these results, would you increase or decrease spend?
+          For each of these results, would you increase, decrease, or maintain
+          spend?
         </div>
 
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="table-auto min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th
@@ -257,20 +258,20 @@ export default function QuestionsGame({
                 {questionPageState === QuestionPageState.Unnoised ? (
                   <span>Conversions</span>
                 ) : (
-                  <span className="flex items-center">
-                    <span className="mr-2">Conversions</span>
-                    <InfoCircleToolTip
-                      className="h-5 w-auto -mt-1 -mx-1"
-                      tooltipChildren={
-                        <div className="font-light normal-case">
-                          The true observed falls within the provided range 95%
-                          of the time.
-                          <br />
-                          <b>Note:</b> This is not a confidence interval on the
-                          true conversion rate.
-                        </div>
-                      }
-                    />
+                  <span className="flex justify-center items-center">
+                    Conversions
+                    <InfoCircleTooltip
+                      infoCircleClassName="h-5 w-auto -mt-1 mx-1"
+                      tooltipClassName="w-64 -ml-20"
+                    >
+                      <div className="font-light normal-case">
+                        The true observed falls within the provided range 95% of
+                        the time.
+                        <br />
+                        <b>Note:</b> This is not a confidence interval on the
+                        true conversion rate.
+                      </div>
+                    </InfoCircleTooltip>
                   </span>
                 )}
               </th>
@@ -278,7 +279,29 @@ export default function QuestionsGame({
                 scope="col"
                 className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Increase/Decrease Spend?
+                <span className="flex justify-center items-center">
+                  Decision
+                  <InfoCircleTooltip
+                    infoCircleClassName="h-5 w-auto -mt-1 mx-1"
+                    tooltipClassName="w-64 -ml-40 md:-ml-32"
+                  >
+                    <div className="font-light normal-case">
+                      Possible decisions:
+                      <div className="flex justify-start items-center">
+                        <ArrowDownCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Decrease</span>
+                      </div>
+                      <div className="flex justify-start items-center">
+                        <MinusCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Maintain</span>
+                      </div>
+                      <div className="flex justify-start items-center">
+                        <ArrowUpCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Increase</span>
+                      </div>
+                    </div>
+                  </InfoCircleTooltip>
+                </span>
               </th>
             </tr>
           </thead>
