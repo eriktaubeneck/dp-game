@@ -314,24 +314,24 @@ export default function QuestionsGame({
         <div className="flex justify-end items-center">
           {questionPageState === QuestionPageState.Unnoised ? (
             <button
-              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+              className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
                 allUnnoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
               }`}
               onClick={handleContinue}
               disabled={!allUnnoisedAnswered}
             >
               Continue to Noised Round{" "}
-              <ArrowRightCircleIcon className="h-8 w-auto" />
+              <ArrowRightCircleIcon className="h-8 w-auto pl-2" />
             </button>
           ) : (
             <button
-              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+              className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
                 allNoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
               }`}
               onClick={handleSubmit}
               disabled={!allNoisedAnswered}
             >
-              Submit <ArrowRightCircleIcon className="h-8 w-auto" />
+              Submit <ArrowRightCircleIcon className="h-8 w-auto pl-2" />
             </button>
           )}
         </div>
@@ -362,32 +362,35 @@ function AnswerButtons({
   };
 
   return (
-    <div className="flex justify-between space-x-1 lg:space-x-4">
+    <div className="flex justify-between space-x-1 md:space-x-4">
       <button
-        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
           answer === Answer.DecreaseSpend ? "bg-cyan-700" : "bg-cyan-400"
         }`}
         onClick={() => handleDecreaseSpend(questionIndex)}
       >
-        Decrease <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+        <span className="hidden md:flex md:mr-2">Decrease</span>
+        <ArrowDownCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
       </button>
 
       <button
-        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-teal-700 rounded-lg flex items-center justify-between ${
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-teal-700 rounded-lg flex items-center justify-between ${
           answer === Answer.MaintainSpend ? "bg-teal-700" : "bg-teal-400"
         }`}
         onClick={() => handleMaintainSpend(questionIndex)}
       >
-        Maintain <MinusCircleIcon className="h-4 lg:h-8 w-autho ml-2" />
+        <span className="hidden md:flex md:mr-2">Maintain</span>
+        <MinusCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
       </button>
 
       <button
-        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
           answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"
         }`}
         onClick={() => handleIncreaseSpend(questionIndex)}
       >
-        Increase <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+        <span className="hidden md:flex md:mr-2">Increase</span>
+        <ArrowUpCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
       </button>
     </div>
   );

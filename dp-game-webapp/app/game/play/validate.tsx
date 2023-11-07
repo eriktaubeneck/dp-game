@@ -241,14 +241,14 @@ function Navigation({
     <div className={className}>
       <div className="flex justify-between items-center">
         <button
-          className="h-12 w-32 lg:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          className="h-12 w-32 md:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
           onClick={setGameStateConfigure}
         >
           <ArrowLeftCircleIcon className="h-8 w-auto" />
           Back
         </button>
         <button
-          className="h-12 w-32 lg:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          className="h-12 w-32 md:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
           onClick={setGameStateStart}
         >
           Continue <ArrowRightCircleIcon className="h-8 w-auto" />

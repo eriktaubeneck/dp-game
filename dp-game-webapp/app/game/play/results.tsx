@@ -12,14 +12,14 @@ import { GameContainer, PageContainer, PageTitle } from "./components";
 
 const answerIcons: Record<Answer, ReactNode> = {
   [Answer.DecreaseSpend]: (
-    <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+    <ArrowDownCircleIcon className="h-4 md:h-8 w-auto ml-2" />
   ),
   [Answer.MaintainSpend]: (
-    <MinusCircleIcon className="h-4 lg:h-8 w-autho ml-2" />
+    <MinusCircleIcon className="h-4 md:h-8 w-autho ml-2" />
   ),
 
   [Answer.IncreaseSpend]: (
-    <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+    <ArrowUpCircleIcon className="h-4 md:h-8 w-auto ml-2" />
   ),
 };
 
