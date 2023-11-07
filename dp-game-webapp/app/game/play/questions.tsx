@@ -4,6 +4,7 @@ import {
   ArrowRightCircleIcon,
   ArrowUpCircleIcon,
   ArrowDownCircleIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import {
@@ -13,18 +14,26 @@ import {
 } from "../simulate";
 import { ExponentialNumber } from "../../exponentialNumber";
 import { CampaignStats } from "../campaignStats";
-import { GameContainer, InfoCircleToolTip, PageContainer } from "./components";
+import { GameContainer, InfoCircleTooltip, PageContainer } from "./components";
 
 export enum Answer {
   IncreaseSpend,
+  MaintainSpend,
   DecreaseSpend,
 }
 
 export interface Question {
   conversions: number;
   noise: number;
-  unnoisedResult?: Answer;
-  noisedResult?: Answer;
+  unnoisedAnswer?: Answer;
+  noisedAnswer?: Answer;
+}
+
+export interface AnsweredQuestion {
+  conversions: number;
+  noise: number;
+  unnoisedAnswer: Answer;
+  noisedAnswer: Answer;
 }
 
 export interface QuestionIndex {
@@ -56,7 +65,7 @@ export default function QuestionsGame({
   currentEpsilon,
   setGameStateFinished,
 }: {
-  setAnsweredQuestions: (value: Question[]) => void;
+  setAnsweredQuestions: (value: AnsweredQuestion[]) => void;
   impressions: number;
   conversionRate: number;
   variance: number;
@@ -108,14 +117,14 @@ export default function QuestionsGame({
     const updatedQuestion: Question = {
       conversions: question.conversions,
       noise: question.noise,
-      unnoisedResult:
+      unnoisedAnswer:
         questionPageState === QuestionPageState.Unnoised
           ? answer
-          : question.unnoisedResult,
-      noisedResult:
+          : question.unnoisedAnswer,
+      noisedAnswer:
         questionPageState === QuestionPageState.Noised
           ? answer
-          : question.noisedResult,
+          : question.noisedAnswer,
     };
 
     questionsCopy[questionIndex] = updatedQuestion;
@@ -127,15 +136,29 @@ export default function QuestionsGame({
   };
 
   const handleSubmit = () => {
-    setAnsweredQuestions(questions);
+    const answeredQuestions: AnsweredQuestion[] = questions.map((question) => {
+      if (
+        question.unnoisedAnswer === undefined ||
+        question.noisedAnswer === undefined
+      ) {
+        throw new Error("Unexpected unanswered question");
+      }
+      return {
+        conversions: question.conversions,
+        noise: question.noise,
+        unnoisedAnswer: question.unnoisedAnswer,
+        noisedAnswer: question.noisedAnswer,
+      };
+    });
+    setAnsweredQuestions(answeredQuestions);
     setGameStateFinished();
   };
 
   const allUnnoisedAnswered: boolean = !questions.some(
-    (question: Question) => question.unnoisedResult === undefined,
+    (question: Question) => question.unnoisedAnswer === undefined,
   );
   const allNoisedAnswered: boolean = !questions.some(
-    (question: Question) => question.noisedResult === undefined,
+    (question: Question) => question.noisedAnswer === undefined,
   );
 
   const getQuestionConversions = (questionIndex: number) => {
@@ -150,9 +173,9 @@ export default function QuestionsGame({
   const getQuestionAnswer = (questionIndex: number): Answer | undefined => {
     const question: Question = questions[questionIndex];
     if (questionPageState == QuestionPageState.Unnoised) {
-      return question.unnoisedResult;
+      return question.unnoisedAnswer;
     } else {
-      return question.noisedResult;
+      return question.noisedAnswer;
     }
   };
 
@@ -221,10 +244,11 @@ export default function QuestionsGame({
         </div>
 
         <div className="mb-6 flex-col items-center justify-between text-lg font-semibold">
-          For each of these results, would you increase or decrease spend?
+          For each of these results, would you increase, decrease, or maintain
+          spend?
         </div>
 
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="table-auto min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th
@@ -234,20 +258,20 @@ export default function QuestionsGame({
                 {questionPageState === QuestionPageState.Unnoised ? (
                   <span>Conversions</span>
                 ) : (
-                  <span className="flex items-center">
-                    <span className="mr-2">Conversions</span>
-                    <InfoCircleToolTip
-                      className="h-5 w-auto -mt-1 -mx-1"
-                      tooltipChildren={
-                        <div className="font-light normal-case">
-                          The true observed falls within the provided range 95%
-                          of the time.
-                          <br />
-                          <b>Note:</b> This is not a confidence interval on the
-                          true conversion rate.
-                        </div>
-                      }
-                    />
+                  <span className="flex justify-center items-center">
+                    Conversions
+                    <InfoCircleTooltip
+                      infoCircleClassName="h-5 w-auto -mt-1 mx-1"
+                      tooltipClassName="w-64 -ml-20"
+                    >
+                      <div className="font-light normal-case">
+                        The true observed falls within the provided range 95% of
+                        the time.
+                        <br />
+                        <b>Note:</b> This is not a confidence interval on the
+                        true conversion rate.
+                      </div>
+                    </InfoCircleTooltip>
                   </span>
                 )}
               </th>
@@ -255,7 +279,29 @@ export default function QuestionsGame({
                 scope="col"
                 className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Increase/Decrease Spend?
+                <span className="flex justify-center items-center">
+                  Decision
+                  <InfoCircleTooltip
+                    infoCircleClassName="h-5 w-auto -mt-1 mx-1"
+                    tooltipClassName="w-64 -ml-40 md:-ml-32"
+                  >
+                    <div className="font-light normal-case">
+                      Possible decisions:
+                      <div className="flex justify-start items-center">
+                        <ArrowDownCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Decrease</span>
+                      </div>
+                      <div className="flex justify-start items-center">
+                        <MinusCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Maintain</span>
+                      </div>
+                      <div className="flex justify-start items-center">
+                        <ArrowUpCircleIcon className="h-6 mx-4 w-auto" />
+                        <span>Increase</span>
+                      </div>
+                    </div>
+                  </InfoCircleTooltip>
+                </span>
               </th>
             </tr>
           </thead>
@@ -268,24 +314,24 @@ export default function QuestionsGame({
         <div className="flex justify-end items-center">
           {questionPageState === QuestionPageState.Unnoised ? (
             <button
-              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+              className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
                 allUnnoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
               }`}
               onClick={handleContinue}
               disabled={!allUnnoisedAnswered}
             >
               Continue to Noised Round{" "}
-              <ArrowRightCircleIcon className="h-8 w-auto" />
+              <ArrowRightCircleIcon className="h-8 w-auto pl-2" />
             </button>
           ) : (
             <button
-              className={`mt-10 h-12 w-40 text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
+              className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
                 allNoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
               }`}
               onClick={handleSubmit}
               disabled={!allNoisedAnswered}
             >
-              Submit <ArrowRightCircleIcon className="h-8 w-auto" />
+              Submit <ArrowRightCircleIcon className="h-8 w-auto pl-2" />
             </button>
           )}
         </div>
@@ -307,27 +353,44 @@ function AnswerButtons({
     handleAnswer(Answer.DecreaseSpend, questionIndex);
   };
 
+  const handleMaintainSpend = (questionIndex: number) => {
+    handleAnswer(Answer.MaintainSpend, questionIndex);
+  };
+
   const handleIncreaseSpend = (questionIndex: number) => {
     handleAnswer(Answer.IncreaseSpend, questionIndex);
   };
 
   return (
-    <div className="flex justify-between space-x-1 lg:space-x-4">
+    <div className="flex justify-between space-x-1 md:space-x-4">
       <button
-        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
           answer === Answer.DecreaseSpend ? "bg-cyan-700" : "bg-cyan-400"
         }`}
         onClick={() => handleDecreaseSpend(questionIndex)}
       >
-        Decrease <ArrowDownCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+        <span className="hidden md:flex md:mr-2">Decrease</span>
+        <ArrowDownCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
       </button>
+
       <button
-        className={`h-8 lg:h-12 lg:py-2 px-1 lg:px-4 text-base text-sm lg:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-teal-700 rounded-lg flex items-center justify-between ${
+          answer === Answer.MaintainSpend ? "bg-teal-700" : "bg-teal-400"
+        }`}
+        onClick={() => handleMaintainSpend(questionIndex)}
+      >
+        <span className="hidden md:flex md:mr-2">Maintain</span>
+        <MinusCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
+      </button>
+
+      <button
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
           answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"
         }`}
         onClick={() => handleIncreaseSpend(questionIndex)}
       >
-        Increase <ArrowUpCircleIcon className="h-4 lg:h-8 w-auto ml-2" />
+        <span className="hidden md:flex md:mr-2">Increase</span>
+        <ArrowUpCircleIcon className="h-6 mx-4 md:mx-0 w-auto" />
       </button>
     </div>
   );
