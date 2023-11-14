@@ -11,9 +11,9 @@ import {
   generateSimulatedConversions,
   laplaceNoise,
   laplacePPF,
-} from "../simulate";
-import { ExponentialNumber } from "../../exponentialNumber";
-import { CampaignStats } from "../campaignStats";
+} from "./simulate";
+import { ExponentialNumber } from "../exponentialNumber";
+import { CampaignStats } from "./campaignStats";
 import { GameContainer, InfoCircleTooltip, PageContainer } from "./components";
 
 export enum Answer {

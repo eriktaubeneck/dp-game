@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import { CampaignSizeSlider, ConversionRateSlider } from "./slider";
-import { CampaignStats } from "../campaignStats";
+import { CampaignStats } from "./campaignStats";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
-import { ExponentialNumber } from "../../exponentialNumber";
+import { ExponentialNumber } from "../exponentialNumber";
 import {
   GameContainer,
   PageContainer,

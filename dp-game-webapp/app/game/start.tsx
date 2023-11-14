@@ -5,7 +5,7 @@ import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
-import { CampaignStats } from "../campaignStats";
+import { CampaignStats } from "./campaignStats";
 import {
   GameContainer,
   PageContainer,

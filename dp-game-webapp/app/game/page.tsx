@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { ExponentialNumber } from "../../exponentialNumber";
-import { defaultVariance } from "../simulate";
+import { ExponentialNumber } from "../exponentialNumber";
+import { defaultVariance } from "./simulate";
 import Configure from "./configure";
 import Validate from "./validate";
 import StartGame from "./start";

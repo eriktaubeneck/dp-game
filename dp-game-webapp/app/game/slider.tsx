@@ -1,5 +1,5 @@
 import React from "react";
-import { ExponentialNumber } from "../../exponentialNumber";
+import { ExponentialNumber } from "../exponentialNumber";
 
 export function CampaignSizeSlider({
   campaignSize,
