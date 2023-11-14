@@ -14,7 +14,7 @@ import {
 } from "./simulate";
 import { ExponentialNumber } from "../exponentialNumber";
 import { CampaignStats } from "./campaignStats";
-import { GameContainer, InfoCircleTooltip, PageContainer } from "./components";
+import { GameContainer, InfoCircleTooltip, PageContainer } from "../components";
 
 export enum Answer {
   IncreaseSpend,

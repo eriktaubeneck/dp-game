@@ -9,7 +9,7 @@ import {
   PageContainer,
   PageDescription,
   PageTitle,
-} from "./components";
+} from "../components";
 
 export default function Configure({
   conversionRate,
