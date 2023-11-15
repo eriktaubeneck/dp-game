@@ -16,10 +16,10 @@ export function CampaignStats({
 
   return (
     <div className={className}>
-      <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
+      <div className="mb-6 text-xl font-semibold leading-6 text-blue-600 dark:text-blue-400">
         Campaign Stats (as configured)
       </div>
-      <div className="mb-6 flex-col items-center justify-between text-gray-600">
+      <div className="mb-6 flex-col items-center justify-between text-gray-600 dark:text-gray-400">
         Number of Impressions: {impressions.toLocaleString()}
         <br />
         Expected Number of Conversions (Total):{" "}

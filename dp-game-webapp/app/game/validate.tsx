@@ -127,97 +127,97 @@ function Percentiles({
 }) {
   return (
     <div className={className}>
-      <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
+      <div className="mb-6 text-xl font-semibold leading-6 text-blue-600 dark:text-blue-400">
         Expected Range of Results
       </div>
 
-      <div>
-        <table className="min-w-fit divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="flex justify-center">
+        <table className="min-w-fit divide-y divide-gray-200 dark:divide-gray-400 dark:border dark:border-gray-600">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
                 scope="col"
-                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
               >
                 Percentile
               </th>
               <th
                 scope="col"
-                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
               >
                 Number of Conversions
               </th>
               <th
                 scope="col"
-                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider"
+                className="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
               >
                 Conversion Rate
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
             <tr key="p01">
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 <b>Very bad</b>
                 <br />
                 (1 out of a 100)
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {Math.round(percentiles[0]).toLocaleString()}
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {((percentiles[0] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p10">
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 <b>Bad</b>
                 <br />
                 (1 out of a 10)
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {Math.round(percentiles[1]).toLocaleString()}
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {((percentiles[1] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p50">
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 <b>Median</b>
                 <br />
                 (5 out of a 10)
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {Math.round(percentiles[2]).toLocaleString()}
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {((percentiles[2] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p90">
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 <b>Good</b>
                 <br />
                 (1 out of a 10)
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {Math.round(percentiles[3]).toLocaleString()}
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {((percentiles[3] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
             <tr key="p99">
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 <b>Very good</b>
                 <br />
                 (1 out of a 100)
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {Math.round(percentiles[4]).toLocaleString()}
               </td>
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600">
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-600 dark:text-gray-400">
                 {((percentiles[4] / impressions) * 100).toFixed(1)}%
               </td>
             </tr>
@@ -241,14 +241,14 @@ function Navigation({
     <div className={className}>
       <div className="flex justify-between items-center">
         <button
-          className="h-12 w-32 md:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          className="h-12 w-32 md:w-40 bg-red-400 dark:bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
           onClick={setGameStateConfigure}
         >
           <ArrowLeftCircleIcon className="h-8 w-auto" />
           Back
         </button>
         <button
-          className="h-12 w-32 md:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+          className="h-12 w-32 md:w-40 bg-sky-400 dark:bg-sky-700 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
           onClick={setGameStateStart}
         >
           Continue <ArrowRightCircleIcon className="h-8 w-auto" />

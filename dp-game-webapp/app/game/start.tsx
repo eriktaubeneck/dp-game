@@ -41,7 +41,7 @@ export default function StartGame({
 
         <div className="flex justify-between items-center mt-10 space-x-4">
           <button
-            className="mt-10 h-12 w-32 md:w-40 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+            className="mt-10 h-12 w-32 md:w-40 bg-red-400 dark:bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
             onClick={setGameStateValidate}
           >
             <ArrowLeftCircleIcon className="h-8 w-auto" />
@@ -49,7 +49,7 @@ export default function StartGame({
           </button>
 
           <button
-            className="mt-10 h-12 w-32 md:w-40 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+            className="mt-10 h-12 w-32 md:w-40 bg-sky-400 dark:bg-sky-700 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
             onClick={setGameStatePlaying}
           >
             Start <ArrowRightCircleIcon className="h-8 w-auto" />

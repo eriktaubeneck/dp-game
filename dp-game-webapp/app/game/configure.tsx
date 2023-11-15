@@ -35,7 +35,7 @@ export default function Configure({
         Before starting the game, we need to configure it to your typical usage.
       </PageDescription>
       <GameContainer>
-        <div className="mb-6 text-xl font-semibold leading-6 text-blue-600">
+        <div className="mb-6 text-xl font-semibold leading-6 text-blue-600 dark:text-blue-400">
           Configuration
         </div>
 
@@ -62,7 +62,7 @@ export default function Configure({
 
         <div className="flex justify-end mt-10">
           <button
-            className="mt-10 h-12 w-56 bg-sky-400 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
+            className="mt-10 h-12 w-56 bg-sky-400 hover:bg-sky-600 dark:bg-sky-700 text-white font-bold py-2 px-4 rounded flex items-center justify-between"
             onClick={setGameStateValidate}
           >
             Continue <ArrowRightCircleIcon className="h-8 w-auto" />
