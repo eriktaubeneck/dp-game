@@ -7,8 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { Answer, AnsweredQuestion } from "./questions";
-import { ExponentialNumber } from "../../exponentialNumber";
-import { GameContainer, PageContainer, PageTitle } from "./components";
+import { ExponentialNumber } from "../exponentialNumber";
+import { GameContainer, PageContainer, PageTitle } from "../components";
 
 const answerIcons: Record<Answer, ReactNode> = {
   [Answer.DecreaseSpend]: (

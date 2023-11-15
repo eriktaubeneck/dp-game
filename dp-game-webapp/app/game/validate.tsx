@@ -5,20 +5,20 @@ import {
   simulatedPercentiles,
   increaseVariance,
   decreaseVariance,
-} from "../simulate";
+} from "./simulate";
 import {
   ArrowRightCircleIcon,
   ArrowLeftCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import AdjustVariance from "./adjustVariance";
-import { ExponentialNumber } from "../../exponentialNumber";
+import { ExponentialNumber } from "../exponentialNumber";
 import {
   GameContainer,
   PageContainer,
   PageDescription,
   PageTitle,
-} from "./components";
+} from "../components";
 
 export default function Validate({
   conversionRate,
