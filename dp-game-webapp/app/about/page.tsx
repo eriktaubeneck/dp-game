@@ -7,7 +7,8 @@ import { ExponentialNumber } from "../exponentialNumber";
 
 export default function About() {
   const [scale, setScale] = useState<ExponentialNumber>(
-    new ExponentialNumber(0, 1.072),
+    // variance = 2b^2 , 1.189... = 2^(-1/4) so that b=(1.189^-2) -> variance=1
+    new ExponentialNumber(-2, 1.189207115),
   );
 
   return (
@@ -35,6 +36,7 @@ export default function About() {
           className="w-full aspect-[3/1] mt-4 bg-slate-100 dark:bg-slate-900 rounded-lg"
         />
 
+        <p>Laplace Variance: {(2 * scale.value * scale.value).toFixed(3)}</p>
         <ScaleSlider scale={scale} onChange={setScale} />
       </div>
     </PageContainer>
@@ -55,16 +57,13 @@ function ScaleSlider({
   };
 
   return (
-    <>
-      <p>Laplace Scale Parameter: {scale.toString()}</p>
-      <input
-        type="range"
-        min="-100"
-        max="100"
-        value={scale.exponent}
-        onChange={handleSliderChange}
-        className="w-full"
-      />
-    </>
+    <input
+      type="range"
+      min="-20"
+      max="30"
+      value={scale.exponent}
+      onChange={handleSliderChange}
+      className="w-full"
+    />
   );
 }
