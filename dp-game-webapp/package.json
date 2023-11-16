@@ -14,6 +14,7 @@
     "@stdlib/random-base-beta": "^0.1.0",
     "@stdlib/random-base-binomial": "^0.1.0",
     "@stdlib/random-base-laplace": "^0.1.0",
+    "@stdlib/stats-base-dists-laplace-cdf": "^0.1.0",
     "d3": "^7.8.5",
     "next": "13.5.4",
     "react": "^18",
