@@ -14,6 +14,7 @@ const navigation = [
   {
     title: "Differential Privacy",
     links: [
+      { title: "Why Differential Privacy", href: "/about/why-dp" },
       { title: "Aggregation", href: "/about/aggregation" },
       { title: "Adding Noise", href: "/about/noise" },
       {
