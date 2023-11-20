@@ -47,12 +47,12 @@ export default function About() {
           while preventing user tracking.
         </p>
         <p className="mt-2">
-          There is initial consensus in that group that{" "}
+          There is{" "}
           <a
             href="https://github.com/patcg/docs-and-reports/blob/main/design-dimensions/Dimensions-with-General-Agreement.md#privacy-defined-at-least-by-differential-privacy"
             className="underline"
           >
-            differential privacy
+            initial consensus in that group that differential privacy
           </a>{" "}
           will be part of the solution, and this effort attempts to better
           understand the effect of that noise on the utility of ads measurement.
@@ -91,16 +91,16 @@ export default function About() {
           potentially sensitive data about people, such as if they have a
           certain health condition. The database is operated by some trusted
           source such as a health care provider, and it only allows{" "}
-          <b>aggregate</b> queries, say for the purpose of tracking prevalence
+          <b>aggregate</b> queries, e.g., for the purpose of tracking prevalence
           among the general population.
         </p>
         <p className="mt-2">
           Now, let's say that <b>aggregation requirement</b> enforced by the
-          database results in an error if includes left than 100 people in the
-          query. For a single query, this is a pretty reasonable solution: for
-          example, a query of 100 people could tell us that {countTrue} people
-          have the condition. For everyone in that query, we'd uniformly learn
-          they all have a {countTrue}% chance of having the condition.
+          database results in an error if it includes less than 100 people in
+          the query. For a single query, this is a pretty reasonable solution:
+          for example, a query of 100 people could tell us that {countTrue}{" "}
+          people have the condition. For everyone in that query, we'd uniformly
+          learn they all have a {countTrue}% chance of having the condition.
         </p>
         <DataTable
           people={people.slice(0, -1)}
@@ -247,10 +247,10 @@ export default function About() {
         </p>
         <p className="mt-2">
           This is the core nature of differential privacy being a measure and
-          not a binary attribute. There is no magic epsilon where things become
-          private. (Except, one may argue, at {"\u03b5=0"}, which is purely
-          random noise. Such a system is certainly private, but it also would
-          provide no utility in an scenario.)
+          not a binary attribute. There is no magic {"\u03b5"} where things
+          become private. (Except, one may argue, at {"\u03b5=0"}, which is
+          purely random noise. Such a system is certainly private, but it also
+          would provide no utility in an scenario.)
         </p>
       </div>
     </PageContainer>
