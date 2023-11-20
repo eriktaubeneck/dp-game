@@ -2,12 +2,16 @@ import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import React, { ReactNode } from "react";
 
 export function PageContainer({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-7xl px-6 py-6 md:px-8">{children}</div>;
+  return (
+    <div className="mx-auto max-w-7xl px-6 py-6 md:px-8 text-gray-900 dark:text-gray-100">
+      {children}
+    </div>
+  );
 }
 
 export function PageTitle({ children }: { children: ReactNode }) {
   return (
-    <h1 className="max-w-2xl text-xl font-bold tracking-tight text-gray-900 sm:text-6xl md:col-span-2 xl:col-auto">
+    <h1 className="text-xl font-bold tracking-tight sm:text-6xl md:col-span-2 xl:col-auto">
       {children}
     </h1>
   );
@@ -15,8 +19,10 @@ export function PageTitle({ children }: { children: ReactNode }) {
 
 export function PageDescription({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-6 max-w-xl md:mt-0 xl:col-end-1 xl:row-start-1">
-      <p className="text-lg leading-8 text-gray-600">{children}</p>
+    <div className="mt-6 xl:col-end-1 xl:row-start-1">
+      <p className="text-lg leading-8 text-gray-600 dark:text-gray-400">
+        {children}
+      </p>
     </div>
   );
 }

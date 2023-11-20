@@ -184,7 +184,7 @@ export default function QuestionsGame({
     const conversions = getQuestionConversions(value);
     return (
       <tr key={index}>
-        <td className="whitespace-nowrap text-sm text-center font-medium text-gray-900">
+        <td className="whitespace-nowrap text-sm text-center font-medium">
           {questionPageState === QuestionPageState.Unnoised ? (
             conversions.toLocaleString()
           ) : (
@@ -248,12 +248,12 @@ export default function QuestionsGame({
           spend?
         </div>
 
-        <table className="table-auto min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="table-auto min-w-full divide-y divide-gray-200 dark:divide-gray-400 dark:border dark:border-gray-600">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
                 scope="col"
-                className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
               >
                 {questionPageState === QuestionPageState.Unnoised ? (
                   <span>Conversions</span>
@@ -277,7 +277,7 @@ export default function QuestionsGame({
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 dark:text-gray-300 uppercase tracking-wider"
               >
                 <span className="flex justify-center items-center">
                   Decision
@@ -305,7 +305,7 @@ export default function QuestionsGame({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
             {questionPageState === QuestionPageState.Unnoised
               ? unnoisedQuestionOrder.map(AnswerRow)
               : noisedQuestionOrder.map(AnswerRow)}
@@ -315,7 +315,9 @@ export default function QuestionsGame({
           {questionPageState === QuestionPageState.Unnoised ? (
             <button
               className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
-                allUnnoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+                allUnnoisedAnswered
+                  ? "bg-sky-400 dark:bg-sky-700 hover:bg-sky-600"
+                  : "bg-sky-200 dark:bg-sky-950"
               }`}
               onClick={handleContinue}
               disabled={!allUnnoisedAnswered}
@@ -326,7 +328,9 @@ export default function QuestionsGame({
           ) : (
             <button
               className={`mt-10 h-12 w-fit text-white font-bold py-2 px-4 rounded flex items-center justify-between ${
-                allNoisedAnswered ? "bg-sky-400 hover:sky-600" : "bg-sky-200"
+                allNoisedAnswered
+                  ? "bg-sky-400 dark:bg-sky-700 hover:bg-sky-600"
+                  : "bg-sky-200 dark:bg-sky-950"
               }`}
               onClick={handleSubmit}
               disabled={!allNoisedAnswered}
@@ -364,8 +368,10 @@ function AnswerButtons({
   return (
     <div className="flex justify-between space-x-1 md:space-x-4">
       <button
-        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-cyan-700 rounded-lg flex items-center justify-between ${
-          answer === Answer.DecreaseSpend ? "bg-cyan-700" : "bg-cyan-400"
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-cyan-700 dark:hover:bg-cyan-500 rounded-lg flex items-center justify-between ${
+          answer === Answer.DecreaseSpend
+            ? "bg-cyan-700 dark:bg-cyan-500"
+            : "bg-cyan-400 dark:bg-cyan-700"
         }`}
         onClick={() => handleDecreaseSpend(questionIndex)}
       >
@@ -374,8 +380,10 @@ function AnswerButtons({
       </button>
 
       <button
-        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-teal-700 rounded-lg flex items-center justify-between ${
-          answer === Answer.MaintainSpend ? "bg-teal-700" : "bg-teal-400"
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-teal-700 dark:hover:bg-teal-500 rounded-lg flex items-center justify-between ${
+          answer === Answer.MaintainSpend
+            ? "bg-teal-700 dark:bg-teal-500"
+            : "bg-teal-400 dark:bg-teal-700"
         }`}
         onClick={() => handleMaintainSpend(questionIndex)}
       >
@@ -384,8 +392,10 @@ function AnswerButtons({
       </button>
 
       <button
-        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-emerald-700 rounded-lg flex items-center justify-between ${
-          answer === Answer.IncreaseSpend ? "bg-emerald-700" : "bg-emerald-400"
+        className={`h-8 md:h-12 md:py-2 px-1 md:px-4 text-base text-sm md:text-lg font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 rounded-lg flex items-center justify-between ${
+          answer === Answer.IncreaseSpend
+            ? "bg-emerald-700 dark:bg-emerald-500"
+            : "bg-emerald-400 dark:bg-emerald-700"
         }`}
         onClick={() => handleIncreaseSpend(questionIndex)}
       >
