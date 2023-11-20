@@ -1,5 +1,6 @@
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import React, { ReactNode } from "react";
+import { AboutNavigation, PrevNextLinks } from "./about/navigation";
 
 export function PageContainer({ children }: { children: ReactNode }) {
   return (
@@ -9,9 +10,25 @@ export function PageContainer({ children }: { children: ReactNode }) {
   );
 }
 
+export function AboutPageContainer({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative mx-auto flex w-full max-w-8xl flex-auto justify-center sm:px-8 xl:px-12">
+      <div className="hidden md:relative md:block md:flex-none">
+        <div className="sticky top-[4.75rem] -ml-0.5 h-[calc(100vh-4.75rem)] w-64 overflow-y-auto overflow-x-hidden py-16 pl-0.5 pr-8 xl:w-72 xl:pr-16">
+          <AboutNavigation />
+        </div>
+      </div>
+      <PageContainer>
+        {children}
+        <PrevNextLinks />
+      </PageContainer>
+    </div>
+  );
+}
+
 export function PageTitle({ children }: { children: ReactNode }) {
   return (
-    <h1 className="text-xl font-bold tracking-tight sm:text-6xl md:col-span-2 xl:col-auto">
+    <h1 className="text-xl font-bold tracking-tight md:text-6xl md:col-span-2 xl:col-auto">
       {children}
     </h1>
   );

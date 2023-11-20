@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useState } from "react";
-import { PageContainer, PageDescription, PageTitle } from "../components";
+import { AboutPageContainer, PageTitle } from "../components";
 import { LaplacePlot } from "../plots";
 import { ExponentialNumber } from "../exponentialNumber";
 import { Switch } from "@headlessui/react";
@@ -32,7 +32,7 @@ export default function About() {
   ];
 
   return (
-    <PageContainer>
+    <AboutPageContainer>
       <PageTitle>Learn more about the Differential Privacy Game.</PageTitle>
       <div className="mt-10">
         <p className="mt-2">
@@ -58,7 +58,7 @@ export default function About() {
           understand the effect of that noise on the utility of ads measurement.
         </p>
 
-        <h1 className="my-2 text-lg sm:text-4xl font-bold tracking-tight">
+        <h1 className="my-2 text-lg md:text-4xl font-bold tracking-tight">
           Differential Privacy
         </h1>
         <p className="mt-2">
@@ -82,7 +82,7 @@ export default function About() {
           . Here, we'll instead motivate with an example.
         </p>
 
-        <h1 className="my-2 text-lg sm:text-4xl font-bold tracking-tight">
+        <h1 className="my-2 text-lg md:text-4xl font-bold tracking-tight">
           Motivating Example
         </h1>
 
@@ -156,7 +156,7 @@ export default function About() {
           algorithm offers no differential privacy, or {"\u03b5\u003D\u221e"}.
         </p>
 
-        <h1 className="my-2 text-lg sm:text-4xl font-bold tracking-tight">
+        <h1 className="my-2 text-lg md:text-4xl font-bold tracking-tight">
           Adding Noise
         </h1>
 
@@ -253,7 +253,7 @@ export default function About() {
           would provide no utility in an scenario.)
         </p>
       </div>
-    </PageContainer>
+    </AboutPageContainer>
   );
 }
 
@@ -290,7 +290,7 @@ function DataTable({
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table className="min-w-[80%] divide-y divide-gray-300 dark:divide-gray-400 shadow-lg">
                 <thead className="bg-slate-50 dark:bg-slate-800">
-                  <tr>
+                  <tr key="thead">
                     <th
                       scope="col"
                       className="py-2 md:py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pl-3"
