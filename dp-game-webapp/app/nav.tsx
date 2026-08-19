@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { AboutNavigation } from "./about/navigation";
 import { Dialog } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -12,10 +14,11 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "About", href: "/about" },
     { name: "Play", href: "/game" },
+    { name: "About", href: "/about" },
   ];
 
+  let pathname = usePathname();
   return (
     <header className="absolute inset-x-0 top-0 z-50">
       <nav
@@ -40,15 +43,16 @@ export default function Header() {
         </div>
         <div className="hidden md:flex md:gap-x-12">
           {navigation.map((item) => (
-            <a
-              key={item.name}
+            <Link
               href={item.href}
+              key={item.name}
               className="text-sm font-semibold leading-6"
             >
               {item.name}
-            </a>
+            </Link>
           ))}
         </div>
+
         <div className="hidden md:flex md:flex-1 md:justify-end">
           {/* Commenting out until we add login functionality. */}
           {/*   <a href="#" className="text-sm font-semibold leading-6"> */}
@@ -82,24 +86,29 @@ export default function Header() {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    {item.name}
-                  </a>
+                  <span key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    >
+                      {item.name}
+                    </Link>
+                    {item.name === "About" && pathname.startsWith("/about") && (
+                      <AboutNavigation />
+                    )}
+                  </span>
                 ))}
               </div>
-              <div className="py-6">
-                {/* Commenting out until we add login functionality. */}
-                {/* <a */}
-                {/*   href="#" */}
-                {/*   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 hover:bg-gray-50 dark:hover:bg-gray-800" */}
-                {/* > */}
-                {/*   Log in */}
-                {/* </a> */}
-              </div>
+
+              {/* Commenting out until we add login functionality. */}
+              {/* <div className="py-6"> */}
+              {/* <a */}
+              {/*   href="#" */}
+              {/*   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 hover:bg-gray-50 dark:hover:bg-gray-800" */}
+              {/* > */}
+              {/*   Log in */}
+              {/* </a> */}
+              {/* </div> */}
             </div>
           </div>
         </Dialog.Panel>
